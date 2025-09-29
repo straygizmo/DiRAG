@@ -1,4 +1,4 @@
-# DiRAG - Document-Integrated Retrieval-Augmented Generation Chat
+# DiRAG - One of the easiest ways to chat with directories
 
 DiRAG is a Windows desktop application that provides an AI chat interface enhanced with Retrieval-Augmented Generation (RAG) capabilities. It allows you to have conversations with AI models while providing relevant context from your local documents and folders.
 
