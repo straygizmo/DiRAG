@@ -1,0 +1,193 @@
+@using DiRAG.Services
+@using DiRAG.Forms
+@inject IChatService ChatService
+@inject MainForm MainForm
+@implements IDisposable
+
+<div class="container-fluid d-flex flex-column vh-100 p-3">
+    <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted small">
+                <span class="me-3">Provider: <strong>@apiProvider</strong></span>
+                <span>Model: <strong>@modelName</strong></span>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="ShowSelectedDirectories">Selected Directories</button>
+                <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ShowContextDialog">Context</button>
+            </div>
+        </div>
+    </div>
+    <div class="border rounded p-3 mb-3 flex-grow-1" style="overflow-y: auto; font-size: @(fontSize)px;">
+        @foreach (var message in chatHistory)
+        {
+            <div class="@(message.IsUser ? "text-end" : "text-start") mb-2">
+                <span class="badge @(message.IsUser ? "bg-primary" : "bg-secondary") p-2 text-wrap chat-message"
+                      style="max-width: 80%; display: inline-block; text-align: left;">
+                    @if (message.IsUser)
+                    {
+                        @message.Text
+                    }
+                    else
+                    {
+                        @((MarkupString)message.Text.Replace("\n", "<br>"))
+                    }
+                </span>
+            </div>
+        }
+        @if (isWaitingForResponse)
+        {
+            <div class="text-start mb-2">
+                <span class="badge bg-secondary p-2">
+                    <span class="dots-animation">
+                        <span>.</span><span>.</span><span>.</span>
+                    </span>
+                </span>
+            </div>
+        }
+    </div>
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="Enter message..."
+               @bind="currentMessage" @bind:event="oninput" @onkeypress="@(async e => { if (e.Key == "Enter") await SendMessageAsync(); })" />
+        <button class="btn btn-primary" @onclick="SendMessageAsync">&#x2197;</button>
+    </div>
+</div>
+@code {
+    private List<ChatMessage> chatHistory = new List<ChatMessage>();
+    private string currentMessage = string.Empty;
+    private bool isWaitingForResponse = false;
+    private int fontSize = 14;
+    private System.Threading.Timer? timer;
+    private string apiProvider = "";
+    private string modelName = "";
+    private string lastContext = "";
+    private List<string> checkedFolders = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        fontSize = DiRAG.Properties.Settings.Default.Chat_FontSize;
+
+        // Load API Provider and Model information
+        apiProvider = DiRAG.Properties.Settings.Default.API_Provider;
+        if (apiProvider == "Claude Code")
+        {
+            modelName = DiRAG.Properties.Settings.Default.ClaudeCode_Model;
+        }
+        else
+        {
+            modelName = DiRAG.Properties.Settings.Default.OpenAI_Model;
+        }
+
+        // Get initial checked folders
+        checkedFolders = MainForm.GetCheckedFolders();
+
+        timer = new System.Threading.Timer(async _ =>
+        {
+            var newFontSize = DiRAG.Properties.Settings.Default.Chat_FontSize;
+            if (fontSize != newFontSize)
+            {
+                fontSize = newFontSize;
+                await InvokeAsync(StateHasChanged);
+            }
+
+            // Update API Provider and Model if changed
+            var newApiProvider = DiRAG.Properties.Settings.Default.API_Provider;
+            var newModelName = newApiProvider == "Claude Code"
+                ? DiRAG.Properties.Settings.Default.ClaudeCode_Model
+                : DiRAG.Properties.Settings.Default.OpenAI_Model;
+
+            // Update checked folders
+            var newCheckedFolders = MainForm.GetCheckedFolders();
+            bool foldersChanged = !checkedFolders.SequenceEqual(newCheckedFolders);
+
+            if (apiProvider != newApiProvider || modelName != newModelName || foldersChanged)
+            {
+                apiProvider = newApiProvider;
+                modelName = newModelName;
+                checkedFolders = newCheckedFolders;
+                await InvokeAsync(StateHasChanged);
+            }
+        }, null, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100));
+    }
+
+    private async Task SendMessageAsync()
+    {
+        if (string.IsNullOrWhiteSpace(currentMessage))
+            return;
+
+        string userMessage = currentMessage;
+        currentMessage = string.Empty;
+
+        chatHistory.Add(new ChatMessage { Text = userMessage, IsUser = true });
+
+        isWaitingForResponse = true;
+        StateHasChanged();
+
+        var response = await ChatService.SendMessageAsync(userMessage);
+
+        // Get the last context used if ChatService is RagEnabledChatService
+        if (ChatService is DiRAG.Services.RagEnabledChatService)
+        {
+            lastContext = DiRAG.Services.RagEnabledChatService.LastContext;
+        }
+
+        isWaitingForResponse = false;
+        chatHistory.Add(new ChatMessage { Text = response, IsUser = false });
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+    private class ChatMessage
+    {
+        public string Text { get; set; } = string.Empty;
+        public bool IsUser { get; set; }
+    }
+
+    private void ShowContextDialog()
+    {
+        if (!string.IsNullOrEmpty(lastContext))
+        {
+            // Show context in a JavaScript alert for now
+            // In production, you might want to use a proper modal dialog
+            Microsoft.JSInterop.JSRuntime? jsRuntime = null;
+            // For now, just add the context to chat history as a system message
+            chatHistory.Add(new ChatMessage {
+                Text = "[Last Context Used]\n" + lastContext,
+                IsUser = false
+            });
+            StateHasChanged();
+        }
+        else
+        {
+            chatHistory.Add(new ChatMessage {
+                Text = "No context has been used yet. Select folders in the Dir to RAG tab to enable RAG.",
+                IsUser = false
+            });
+            StateHasChanged();
+        }
+    }
+
+    private void ShowSelectedDirectories()
+    {
+        var folders = MainForm.GetCheckedFolders();
+
+        if (folders.Count > 0)
+        {
+            var foldersList = string.Join("\n", folders.Select((f, i) => $"{i + 1}. {f}"));
+            chatHistory.Add(new ChatMessage {
+                Text = $"[Selected Directories]\n{foldersList}",
+                IsUser = false
+            });
+        }
+        else
+        {
+            chatHistory.Add(new ChatMessage {
+                Text = "[Selected Directories]\nNo directories are currently selected. Please check directories in the 'Dir to RAG' tab to enable RAG functionality.",
+                IsUser = false
+            });
+        }
+        StateHasChanged();
+    }
+}

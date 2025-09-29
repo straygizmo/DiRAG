@@ -1,0 +1,849 @@
+using Microsoft.AspNetCore.Components.WebView.WindowsForms;
+using Microsoft.Extensions.DependencyInjection;
+using DiRAG.Pages;
+using DiRAG.Services;
+using DiRAG.Services.Mcp;
+using DiRAG.Models;
+using Krypton.Toolkit;
+using System.Text.Json;
+
+namespace DiRAG.Forms
+{
+    public partial class MainForm : KryptonForm
+    {
+        private IMcpService? _mcpService;
+        private McpServerCollection _mcpServerCollection = new();
+
+        public MainForm()
+        {
+            InitializeComponent();
+            InitializeMcpComponents();
+        }
+
+        private void MainForm_Load(object? sender, EventArgs e)
+        {
+            LoadSettings();
+            LoadFolderTree();
+
+            if (!IsConfigured())
+            {
+                ShowSettingsDialog();
+                if (!IsConfigured())
+                {
+                    MessageBox.Show("API configuration is required to use this application.",
+                        "Configuration Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    this.Close();
+                    return;
+                }
+            }
+
+            InitializeBlazorWebView();
+        }
+
+        private void InitializeBlazorWebView()
+        {
+            var services = new ServiceCollection();
+            services.AddWindowsFormsBlazorWebView();
+
+            // Add this form as a singleton so it can be injected
+            services.AddSingleton(this);
+
+            // Add RAG service
+            services.AddScoped<IRagService>(serviceProvider =>
+            {
+                var embeddingUrl = Properties.Settings.Default.Embedding_Url;
+                var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
+                var embeddingModel = Properties.Settings.Default.Embedding_Model;
+                var useNativeEmbedding = Properties.Settings.Default.UseNativeEmbedding;
+                var contextLength = Properties.Settings.Default.RAG_ContextLength;
+                var chunkSize = Properties.Settings.Default.RAG_ChunkSize;
+                var chunkOverlap = Properties.Settings.Default.RAG_ChunkOverlap;
+
+                return new RagService(embeddingUrl, apiKey, embeddingModel, useNativeEmbedding,
+                    contextLength, chunkSize, chunkOverlap);
+            });
+
+            // Choose the chat service based on the selected API provider
+            var apiProvider = Properties.Settings.Default.API_Provider;
+
+            services.AddScoped<IChatService>(serviceProvider =>
+            {
+                IChatService innerService;
+
+                if (apiProvider == "Claude Code")
+                {
+                    var cliPath = Properties.Settings.Default.ClaudeCode_CLIPath;
+                    var model = Properties.Settings.Default.ClaudeCode_Model;
+                    innerService = new ClaudeCodeChatService(cliPath, model);
+                }
+                else // OpenAI Compatible
+                {
+                    var baseUrl = Properties.Settings.Default.OpenAI_BaseUrl;
+                    var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
+                    var model = Properties.Settings.Default.OpenAI_Model;
+                    innerService = new OpenAIChatService(baseUrl, apiKey, model);
+                }
+
+                // Wrap the inner service with RAG capabilities
+                var ragService = serviceProvider.GetRequiredService<IRagService>();
+                var mainForm = serviceProvider.GetRequiredService<MainForm>();
+                var useContextInSystemMessage = Properties.Settings.Default.UseContextInSystemMessage;
+                var ragEnabledService = new RagEnabledChatService(innerService, ragService, mainForm, useContextInSystemMessage);
+
+                // Wrap with MCP capabilities
+                var mcpService = mainForm.GetMcpService();
+                return new McpEnabledChatService(ragEnabledService, mcpService);
+            });
+
+            blazorWebView1.HostPage = "wwwroot\\index.html";
+            blazorWebView1.Services = services.BuildServiceProvider();
+            blazorWebView1.RootComponents.Add<Chat>("#app");
+        }
+
+        private bool IsConfigured()
+        {
+            var apiProvider = Properties.Settings.Default.API_Provider;
+
+            if (apiProvider == "Claude Code")
+            {
+                var claudePath = Properties.Settings.Default.ClaudeCode_CLIPath;
+                var claudeModel = Properties.Settings.Default.ClaudeCode_Model;
+                return !string.IsNullOrEmpty(claudePath) && !string.IsNullOrEmpty(claudeModel);
+            }
+            else // OpenAI Compatible
+            {
+                var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
+                var model = Properties.Settings.Default.OpenAI_Model;
+                return !string.IsNullOrEmpty(apiKey) && !string.IsNullOrEmpty(model);
+            }
+        }
+
+        private void ShowSettingsDialog()
+        {
+            tabMain.SelectedIndex = 1;
+        }
+
+
+        private void LoadSettings()
+        {
+            // Load API Provider selection
+            var apiProvider = Properties.Settings.Default.API_Provider;
+            cmbAPIProvider.SelectedItem = apiProvider;
+
+            // Load OpenAI settings
+            txtBaseUrl.Text = Properties.Settings.Default.OpenAI_BaseUrl;
+            txtApiKey.Text = Properties.Settings.Default.OpenAI_ApiKey;
+            txtModel.Text = string.IsNullOrEmpty(Properties.Settings.Default.OpenAI_Model)
+                ? "gpt-4o"
+                : Properties.Settings.Default.OpenAI_Model;
+
+            // Load Claude Code settings
+            txtClaudeCodePath.Text = Properties.Settings.Default.ClaudeCode_CLIPath;
+            var claudeModel = Properties.Settings.Default.ClaudeCode_Model;
+            if (cmbClaudeModel.Items.Contains(claudeModel))
+            {
+                cmbClaudeModel.SelectedItem = claudeModel;
+            }
+            else
+            {
+                cmbClaudeModel.SelectedIndex = 0; // Default to first item
+            }
+
+            // Load embedding settings
+            txtEmbeddingUrl.Text = Properties.Settings.Default.Embedding_Url;
+            txtEmbeddingModel.Text = Properties.Settings.Default.Embedding_Model;
+            txtContextLength.Text = Properties.Settings.Default.RAG_ContextLength.ToString();
+            txtChunkSize.Text = Properties.Settings.Default.RAG_ChunkSize.ToString();
+            txtChunkOverlap.Text = Properties.Settings.Default.RAG_ChunkOverlap.ToString();
+            chkUseNativeEmbedding.Checked = Properties.Settings.Default.UseNativeEmbedding;
+            txtTopKChunks.Text = Properties.Settings.Default.RAG_TopKChunks.ToString();
+            txtMaxContextLength.Text = Properties.Settings.Default.RAG_MaxContextLength.ToString();
+
+            // Load Use Context in System Message setting
+            chkUseContextInSystemMessage.Checked = Properties.Settings.Default.UseContextInSystemMessage;
+
+            trackBarFontSize.Value = Properties.Settings.Default.Chat_FontSize;
+
+            var selectedIndex = Properties.Settings.Default.UI_Theme;
+            if (selectedIndex >= 0)
+            {
+                kryptonThemeListBox1.SelectedIndex = selectedIndex;
+            }
+
+            // Update UI visibility based on selected provider
+            UpdateProviderUI(apiProvider);
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            // Save API Provider selection
+            Properties.Settings.Default.API_Provider = cmbAPIProvider.SelectedItem?.ToString() ?? "OpenAI Compatible";
+
+            // Save OpenAI settings (always save, even if not currently selected)
+            Properties.Settings.Default.OpenAI_BaseUrl = txtBaseUrl.Text;
+            Properties.Settings.Default.OpenAI_ApiKey = txtApiKey.Text;
+            Properties.Settings.Default.OpenAI_Model = txtModel.Text;
+
+            // Save Claude Code settings (always save, even if not currently selected)
+            Properties.Settings.Default.ClaudeCode_CLIPath = txtClaudeCodePath.Text;
+            Properties.Settings.Default.ClaudeCode_Model = cmbClaudeModel.SelectedItem?.ToString() ?? "claude-sonnet-4-20250514";
+
+            // Save embedding settings
+            Properties.Settings.Default.Embedding_Url = txtEmbeddingUrl.Text;
+            Properties.Settings.Default.Embedding_Model = txtEmbeddingModel.Text;
+            Properties.Settings.Default.Chat_FontSize = trackBarFontSize.Value;
+
+            if (int.TryParse(txtContextLength.Text, out var contextLength))
+                Properties.Settings.Default.RAG_ContextLength = contextLength;
+            if (int.TryParse(txtChunkSize.Text, out var chunkSize))
+                Properties.Settings.Default.RAG_ChunkSize = chunkSize;
+            if (int.TryParse(txtChunkOverlap.Text, out var chunkOverlap))
+                Properties.Settings.Default.RAG_ChunkOverlap = chunkOverlap;
+            if (int.TryParse(txtTopKChunks.Text, out var topKChunks))
+                Properties.Settings.Default.RAG_TopKChunks = topKChunks;
+            if (int.TryParse(txtMaxContextLength.Text, out var maxContextLength))
+                Properties.Settings.Default.RAG_MaxContextLength = maxContextLength;
+
+            Properties.Settings.Default.UseNativeEmbedding = chkUseNativeEmbedding.Checked;
+
+            // Save Use Context in System Message setting
+            Properties.Settings.Default.UseContextInSystemMessage = chkUseContextInSystemMessage.Checked;
+
+            Properties.Settings.Default.Save();
+
+            MessageBox.Show("Settings saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void trackBarFontSize_Scroll(object? sender, EventArgs e)
+        {
+            Properties.Settings.Default.Chat_FontSize = trackBarFontSize.Value;
+        }
+
+        private void cmbAPIProvider_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            var selectedProvider = cmbAPIProvider.SelectedItem?.ToString();
+            UpdateProviderUI(selectedProvider);
+        }
+
+        private void UpdateProviderUI(string? provider)
+        {
+            if (provider == "Claude Code")
+            {
+                // Show Claude Code controls
+                lblClaudeCodePath.Visible = true;
+                txtClaudeCodePath.Visible = true;
+                lblClaudeModel.Visible = true;
+                cmbClaudeModel.Visible = true;
+
+                // Hide OpenAI controls
+                lblBaseUrl.Visible = false;
+                txtBaseUrl.Visible = false;
+                lblApiKey.Visible = false;
+                txtApiKey.Visible = false;
+                lblModel.Visible = false;
+                txtModel.Visible = false;
+            }
+            else // OpenAI Compatible
+            {
+                // Show OpenAI controls
+                lblBaseUrl.Visible = true;
+                txtBaseUrl.Visible = true;
+                lblApiKey.Visible = true;
+                txtApiKey.Visible = true;
+                lblModel.Visible = true;
+                txtModel.Visible = true;
+
+                // Hide Claude Code controls
+                lblClaudeCodePath.Visible = false;
+                txtClaudeCodePath.Visible = false;
+                lblClaudeModel.Visible = false;
+                cmbClaudeModel.Visible = false;
+            }
+
+            // Update checkbox state based on provider
+            if (provider == "Claude Code")
+            {
+                // Claude Code doesn't support system messages, so disable and uncheck
+                chkUseContextInSystemMessage.Enabled = false;
+                chkUseContextInSystemMessage.Checked = false;
+            }
+            else // OpenAI Compatible
+            {
+                // Enable the checkbox for OpenAI Compatible APIs
+                chkUseContextInSystemMessage.Enabled = true;
+            }
+        }
+
+        private void KryptonThemeListBox1_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            Properties.Settings.Default.UI_Theme = kryptonThemeListBox1.SelectedIndex;
+            Properties.Settings.Default.Save();
+        }
+
+        private void LoadFolderTree()
+        {
+            ktvFolderTree.BeginUpdate();
+            ktvFolderTree.Nodes.Clear();
+
+            foreach (var drive in DriveInfo.GetDrives())
+            {
+                if (drive.IsReady)
+                {
+                    var driveNode = new TreeNode(drive.Name)
+                    {
+                        Tag = drive.RootDirectory.FullName
+                    };
+                    driveNode.Nodes.Add(new TreeNode());
+                    ktvFolderTree.Nodes.Add(driveNode);
+                }
+            }
+
+            ktvFolderTree.BeforeExpand += KtvFolderTree_BeforeExpand;
+            ktvFolderTree.EndUpdate();
+
+            RestoreTreeState();
+        }
+
+        private void KtvFolderTree_BeforeExpand(object? sender, TreeViewCancelEventArgs e)
+        {
+            if (e.Node == null || e.Node.Nodes.Count != 1 || e.Node.Nodes[0].Tag != null)
+                return;
+
+            e.Node.Nodes.Clear();
+
+            var directoryPath = e.Node.Tag?.ToString();
+            if (string.IsNullOrEmpty(directoryPath))
+                return;
+
+            try
+            {
+                var directoryInfo = new DirectoryInfo(directoryPath);
+                foreach (var directory in directoryInfo.GetDirectories())
+                {
+                    try
+                    {
+                        var dirNode = new TreeNode(directory.Name)
+                        {
+                            Tag = directory.FullName
+                        };
+                        dirNode.Nodes.Add(new TreeNode());
+                        e.Node.Nodes.Add(dirNode);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        public List<string> GetCheckedFolders()
+        {
+            var checkedFolders = new List<string>();
+            GetCheckedFoldersRecursive(ktvFolderTree.Nodes, checkedFolders);
+            return checkedFolders;
+        }
+
+        private void GetCheckedFoldersRecursive(TreeNodeCollection nodes, List<string> checkedFolders)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Checked && node.Tag != null)
+                {
+                    checkedFolders.Add(node.Tag.ToString()!);
+                }
+                if (node.Nodes.Count > 0)
+                {
+                    GetCheckedFoldersRecursive(node.Nodes, checkedFolders);
+                }
+            }
+        }
+
+        private async void tsbIndexing_Click(object sender, EventArgs e)
+        {
+            await Indexing();
+        }
+
+        public async Task Indexing()
+        {
+            SaveTreeState();
+
+            var checkedFolders = GetCheckedFolders();
+
+            if (checkedFolders.Count == 0)
+            {
+                MessageBox.Show("Please select at least one folder to process.", "No Folders Selected",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            tsbIndexing.Enabled = false;
+            toolStripStatusLabel1.Text = "Processing...";
+
+            try
+            {
+                var embeddingUrl = Properties.Settings.Default.Embedding_Url;
+                var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
+                var embeddingModel = Properties.Settings.Default.Embedding_Model;
+                var contextLength = Properties.Settings.Default.RAG_ContextLength;
+                var chunkSize = Properties.Settings.Default.RAG_ChunkSize;
+                var chunkOverlap = Properties.Settings.Default.RAG_ChunkOverlap;
+                var useNativeEmbedding = Properties.Settings.Default.UseNativeEmbedding;
+
+                if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(embeddingModel))
+                {
+                    MessageBox.Show("Please configure Embedding settings in the Settings tab.",
+                        "Configuration Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var ragService = new Services.RagService(embeddingUrl, apiKey, embeddingModel, useNativeEmbedding, contextLength, chunkSize, chunkOverlap);
+                var progress = new Progress<string>(status =>
+                {
+                    toolStripStatusLabel1.Text = status;
+                    Application.DoEvents();
+                });
+
+                await ragService.ProcessFoldersAsync(checkedFolders, progress);
+
+                toolStripStatusLabel1.Text = "Processing complete!";
+                MessageBox.Show("RAG processing completed successfully!", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = "Error occurred";
+                var detailedError = $"Error during RAG processing:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}";
+                if (ex.InnerException != null)
+                {
+                    detailedError += $"\n\nInner Exception:\n{ex.InnerException.Message}";
+                }
+                MessageBox.Show(detailedError, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                tsbIndexing.Enabled = true;
+            }
+        }
+
+        private void tspRefresh_Click(object sender, EventArgs e)
+        {
+            LoadFolderTree();
+        }
+
+        private void SaveTreeState()
+        {
+            try
+            {
+                var treeState = new Dictionary<string, TreeNodeState>();
+                SerializeTreeState(ktvFolderTree.Nodes, treeState);
+                var json = JsonSerializer.Serialize(treeState);
+                Properties.Settings.Default.FolderTree_State = json;
+                Properties.Settings.Default.Save();
+            }
+            catch
+            {
+            }
+        }
+
+        private void SerializeTreeState(TreeNodeCollection nodes, Dictionary<string, TreeNodeState> treeState)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                var path = node.Tag?.ToString();
+                if (!string.IsNullOrEmpty(path))
+                {
+                    treeState[path] = new TreeNodeState
+                    {
+                        IsChecked = node.Checked,
+                        IsExpanded = node.IsExpanded
+                    };
+
+                    if (node.Nodes.Count > 0)
+                    {
+                        SerializeTreeState(node.Nodes, treeState);
+                    }
+                }
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveTreeState();
+        }
+
+        private void RestoreTreeState()
+        {
+            try
+            {
+                var json = Properties.Settings.Default.FolderTree_State;
+                if (string.IsNullOrEmpty(json))
+                    return;
+
+                var treeState = JsonSerializer.Deserialize<Dictionary<string, TreeNodeState>>(json);
+                if (treeState == null)
+                    return;
+
+                DeserializeTreeState(ktvFolderTree.Nodes, treeState);
+            }
+            catch
+            {
+            }
+        }
+
+        private void DeserializeTreeState(TreeNodeCollection nodes, Dictionary<string, TreeNodeState> treeState)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                var path = node.Tag?.ToString();
+                if (!string.IsNullOrEmpty(path) && treeState.TryGetValue(path, out var state))
+                {
+                    node.Checked = state.IsChecked;
+
+                    if (state.IsExpanded && node.Nodes.Count > 0)
+                    {
+                        node.Expand();
+
+                        if (node.Nodes.Count > 0 && node.Nodes[0].Tag != null)
+                        {
+                            DeserializeTreeState(node.Nodes, treeState);
+                        }
+                    }
+                }
+            }
+        }
+
+        #region MCP Server Management
+
+        private void InitializeMcpComponents()
+        {
+            // Initialize MCP service
+            _mcpService = new McpService();
+            _mcpService.LogMessage += (sender, message) =>
+            {
+                AppendMcpLog(message);
+            };
+            _mcpService.ServerStatusChanged += (sender, args) =>
+            {
+                UpdateServerStatus(args);
+            };
+
+            // Setup DataGridView
+            dgvMcpServers.AllowUserToAddRows = false;
+            dgvMcpServers.AllowUserToDeleteRows = false;
+            dgvMcpServers.ReadOnly = true;
+            dgvMcpServers.Columns.Clear();
+            dgvMcpServers.Columns.Add("Name", "Name");
+            dgvMcpServers.Columns.Add("Status", "Status");
+            dgvMcpServers.Columns.Add("Type", "Type");
+            dgvMcpServers.Columns.Add("Enabled", "Enabled");
+            dgvMcpServers.Columns[0].Width = 100;
+            dgvMcpServers.Columns[1].Width = 70;
+            dgvMcpServers.Columns[2].Width = 50;
+            dgvMcpServers.Columns[3].Width = 60;
+
+            // Wire up event handlers
+            btnAddMcpServer.Click += BtnAddMcpServer_Click;
+            btnEditMcpServer.Click += BtnEditMcpServer_Click;
+            btnRemoveMcpServer.Click += BtnRemoveMcpServer_Click;
+            btnTestMcpServer.Click += BtnTestMcpServer_Click;
+            btnLoadMcpServers.Click += BtnLoadMcpServers_Click;
+
+            // Load MCP servers from settings
+            LoadMcpServers();
+        }
+
+        private void LoadMcpServers()
+        {
+            try
+            {
+                var mcpServersJson = Properties.Settings.Default.MCP_Servers;
+                if (!string.IsNullOrEmpty(mcpServersJson))
+                {
+                    _mcpServerCollection = JsonSerializer.Deserialize<McpServerCollection>(mcpServersJson) ?? new McpServerCollection();
+                }
+                else
+                {
+                    _mcpServerCollection = new McpServerCollection();
+                }
+
+                RefreshMcpServerList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading MCP servers: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SaveMcpServers()
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(_mcpServerCollection, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                Properties.Settings.Default.MCP_Servers = json;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving MCP servers: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void RefreshMcpServerList()
+        {
+            dgvMcpServers.Rows.Clear();
+            foreach (var server in _mcpServerCollection.Servers)
+            {
+                var status = _mcpService?.IsServerLoaded(server.Id) ?? false ? "Connected" : "Disconnected";
+                dgvMcpServers.Rows.Add(server.Name, status, server.TransportType.ToString(), server.IsEnabled);
+                var row = dgvMcpServers.Rows[dgvMcpServers.Rows.Count - 1];
+                row.Tag = server;
+            }
+        }
+
+        private void BtnAddMcpServer_Click(object? sender, EventArgs e)
+        {
+            using var dialog = new McpServerDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                _mcpServerCollection.Servers.Add(dialog.ServerConfig);
+                SaveMcpServers();
+                RefreshMcpServerList();
+                AppendMcpLog($"Added server: {dialog.ServerConfig.Name}");
+            }
+        }
+
+        private void BtnEditMcpServer_Click(object? sender, EventArgs e)
+        {
+            if (dgvMcpServers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a server to edit.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var server = dgvMcpServers.SelectedRows[0].Tag as McpServerConfig;
+            if (server == null) return;
+
+            using var dialog = new McpServerDialog(server);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                SaveMcpServers();
+                RefreshMcpServerList();
+                AppendMcpLog($"Updated server: {server.Name}");
+            }
+        }
+
+        private void BtnRemoveMcpServer_Click(object? sender, EventArgs e)
+        {
+            if (dgvMcpServers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a server to remove.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var server = dgvMcpServers.SelectedRows[0].Tag as McpServerConfig;
+            if (server == null) return;
+
+            var result = MessageBox.Show($"Are you sure you want to remove '{server.Name}'?",
+                "Confirm Remove", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                // Unload server if connected
+                if (_mcpService?.IsServerLoaded(server.Id) ?? false)
+                {
+                    _mcpService.UnloadServerAsync(server.Id).GetAwaiter().GetResult();
+                }
+
+                _mcpServerCollection.Servers.Remove(server);
+                SaveMcpServers();
+                RefreshMcpServerList();
+                AppendMcpLog($"Removed server: {server.Name}");
+            }
+        }
+
+        private async void BtnTestMcpServer_Click(object? sender, EventArgs e)
+        {
+            if (dgvMcpServers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a server to test.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var server = dgvMcpServers.SelectedRows[0].Tag as McpServerConfig;
+            if (server == null || _mcpService == null) return;
+
+            // Run test in background to prevent UI freeze
+            btnTestMcpServer.Enabled = false;
+            AppendMcpLog($"Testing server: {server.Name}");
+
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var success = await _mcpService.LoadServerAsync(server);
+
+                    Invoke(() => {
+                        if (success)
+                        {
+                            AppendMcpLog($"Connection successful! Getting tools...");
+                        }
+                        else
+                        {
+                            AppendMcpLog($"Failed to connect to server: {server.Name}");
+                        }
+                    });
+
+                    if (success)
+                    {
+                        var tools = await _mcpService.GetServerToolsAsync(server.Id);
+                        Invoke(() => {
+                            AppendMcpLog($"Test successful! Server provides {tools.Count} tools.");
+                            if (tools.Count > 0)
+                            {
+                                AppendMcpLog("Available tools:");
+                                foreach (var tool in tools.Take(5)) // Show first 5 tools
+                                {
+                                    AppendMcpLog($"  - {tool.Name}: {tool.Description}");
+                                }
+                                if (tools.Count > 5)
+                                {
+                                    AppendMcpLog($"  ... and {tools.Count - 5} more tools");
+                                }
+                            }
+                        });
+
+                        // Unload after test
+                        await _mcpService.UnloadServerAsync(server.Id);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Invoke(() => {
+                        AppendMcpLog($"Test error: {ex.Message}");
+                        if (ex.InnerException != null)
+                        {
+                            AppendMcpLog($"Inner error: {ex.InnerException.Message}");
+                        }
+                        MessageBox.Show($"Test failed: {ex.Message}", "Test Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                }
+                finally
+                {
+                    Invoke(() => {
+                        RefreshMcpServerList();
+                        btnTestMcpServer.Enabled = true;
+                    });
+                }
+            });
+        }
+
+        private async void BtnLoadMcpServers_Click(object? sender, EventArgs e)
+        {
+            if (_mcpService == null) return;
+
+            try
+            {
+                btnLoadMcpServers.Enabled = false;
+
+                // Unload all servers first
+                await _mcpService.UnloadAllServersAsync();
+
+                // Load enabled servers
+                int loadedCount = 0;
+                foreach (var server in _mcpServerCollection.Servers)
+                {
+                    if (server.IsEnabled)
+                    {
+                        AppendMcpLog($"Loading server: {server.Name}");
+                        var success = await _mcpService.LoadServerAsync(server);
+                        if (success)
+                        {
+                            loadedCount++;
+                            AppendMcpLog($"Successfully loaded: {server.Name}");
+                        }
+                        else
+                        {
+                            AppendMcpLog($"Failed to load: {server.Name}");
+                        }
+                    }
+                }
+
+                AppendMcpLog($"Loaded {loadedCount} servers.");
+                RefreshMcpServerList();
+            }
+            catch (Exception ex)
+            {
+                AppendMcpLog($"Load error: {ex.Message}");
+                MessageBox.Show($"Error loading servers: {ex.Message}", "Load Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnLoadMcpServers.Enabled = true;
+            }
+        }
+
+        private void AppendMcpLog(string message)
+        {
+            if (rtbMcpLog.InvokeRequired)
+            {
+                rtbMcpLog.Invoke(() => AppendMcpLog(message));
+                return;
+            }
+
+            var timestamp = DateTime.Now.ToString("HH:mm:ss");
+            rtbMcpLog.AppendText($"[{timestamp}] {message}\n");
+            rtbMcpLog.ScrollToCaret();
+
+            // Limit log size
+            if (rtbMcpLog.Lines.Length > 1000)
+            {
+                var lines = rtbMcpLog.Lines.Skip(500).ToArray();
+                rtbMcpLog.Lines = lines;
+            }
+        }
+
+        private void UpdateServerStatus(McpServerEventArgs args)
+        {
+            if (dgvMcpServers.InvokeRequired)
+            {
+                dgvMcpServers.Invoke(() => UpdateServerStatus(args));
+                return;
+            }
+
+            foreach (DataGridViewRow row in dgvMcpServers.Rows)
+            {
+                var server = row.Tag as McpServerConfig;
+                if (server != null && server.Id == args.ServerId)
+                {
+                    row.Cells[1].Value = args.Status.ToString();
+                    break;
+                }
+            }
+        }
+
+        public IMcpService? GetMcpService()
+        {
+            return _mcpService;
+        }
+
+        #endregion
+
+        private class TreeNodeState
+        {
+            public bool IsChecked { get; set; }
+            public bool IsExpanded { get; set; }
+        }
+    }
+}
