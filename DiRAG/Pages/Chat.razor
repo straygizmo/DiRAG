@@ -16,6 +16,7 @@
             <div>
                 <button class="btn btn-sm btn-outline-secondary" @onclick="ShowSelectedDirectories">Selected Directories</button>
                 <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ShowContextDialog">Context</button>
+                <button class="btn btn-sm btn-outline-primary ms-2" @onclick="ClearChat">New Chat</button>
             </div>
         </div>
     </div>
@@ -294,5 +295,33 @@
         }
         StateHasChanged();
         await ScrollToBottomAsync();
+    }
+
+    private async Task ClearChat()
+    {
+        // If there's no chat history, nothing to clear
+        if (chatHistory.Count == 0)
+            return;
+
+        // Show confirmation dialog using JavaScript
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to clear the chat history? This action cannot be undone.");
+
+        if (confirmed)
+        {
+            // Clear the chat history
+            chatHistory.Clear();
+
+            // Reset the current message
+            currentMessage = string.Empty;
+
+            // Reset the last context
+            lastContext = string.Empty;
+
+            // Reset waiting state
+            isWaitingForResponse = false;
+
+            // Update the UI
+            StateHasChanged();
+        }
     }
 }
