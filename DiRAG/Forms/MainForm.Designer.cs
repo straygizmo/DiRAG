@@ -619,10 +619,10 @@
             // btnTestEmbedding
             //
             btnTestEmbedding.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            btnTestEmbedding.Location = new Point(3, 102);
+            btnTestEmbedding.Location = new Point(3, 380);
             btnTestEmbedding.Margin = new Padding(3, 2, 3, 2);
             btnTestEmbedding.Name = "btnTestEmbedding";
-            btnTestEmbedding.Size = new Size(289, 25);
+            btnTestEmbedding.Size = new Size(289, 30);
             btnTestEmbedding.TabIndex = 22;
             btnTestEmbedding.Values.DropDownArrowColor = Color.Empty;
             btnTestEmbedding.Values.Text = "Test Embedding";

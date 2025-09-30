@@ -244,15 +244,6 @@ namespace DiRAG.Forms
                     return;
                 }
 
-                if (!useNativeEmbedding)
-                {
-                    MessageBox.Show("Please enable 'Use Native C# Embedding' to test the connection.\n\n" +
-                        "Python-based embedding testing is not currently supported.",
-                        "Feature Not Available",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
                 // Disable button during test
                 if (sender is Krypton.Toolkit.KryptonButton btn)
                 {
@@ -260,27 +251,114 @@ namespace DiRAG.Forms
                     btn.Values.Text = "Testing...";
                 }
 
-                // Create RAG service with current settings
-                var ragService = new RagService(
-                    embeddingUrl,
-                    apiKey,
-                    embeddingModel,
-                    useNativeEmbedding,
-                    contextLength: 2048,
-                    chunkSize: 500,
-                    chunkOverlap: 100
-                );
+                string message;
 
-                // Test with a sample text
-                const string testText = "This is a test to verify the embedding configuration.";
-                var embedding = await ragService.GenerateEmbeddingAsync(testText);
+                if (useNativeEmbedding)
+                {
+                    // Use C# native implementation
+                    var ragService = new RagService(
+                        embeddingUrl,
+                        apiKey,
+                        embeddingModel,
+                        useNativeEmbedding,
+                        contextLength: 2048,
+                        chunkSize: 500,
+                        chunkOverlap: 100
+                    );
 
-                // Show success message with embedding details
-                var message = $"✓ Connection Successful!\n\n" +
+                    const string testText = "This is a test to verify the embedding configuration.";
+                    var embedding = await ragService.GenerateEmbeddingAsync(testText);
+
+                    message = $"✓ Connection Successful!\n\n" +
+                             $"Method: C# Native\n" +
                              $"Embedding Model: {embeddingModel}\n" +
                              $"Embedding URL: {embeddingUrl}\n" +
                              $"Embedding Dimension: {embedding.Length}\n" +
                              $"Sample values: [{string.Join(", ", embedding.Take(5).Select(f => f.ToString("F4")))}...]";
+                }
+                else
+                {
+                    // Use Python implementation
+                    var pythonExecutable = PythonPathHelper.PythonExecutable;
+                    var testScript = PythonPathHelper.GetScriptPath("test_embedding.py");
+
+                    // Create temporary config file
+                    var tempConfigFile = Path.Combine(Path.GetTempPath(), $"test_embedding_config_{Guid.NewGuid()}.json");
+
+                    try
+                    {
+                        var config = new
+                        {
+                            embedding_url = embeddingUrl,
+                            embedding_model = embeddingModel,
+                            api_key = apiKey
+                        };
+
+                        var configJson = System.Text.Json.JsonSerializer.Serialize(config, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                        await File.WriteAllTextAsync(tempConfigFile, configJson);
+
+                        // Run Python test script
+                        var processStartInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = pythonExecutable,
+                            Arguments = $"\"{testScript}\" \"{tempConfigFile}\"",
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            WorkingDirectory = PythonPathHelper.PythonToolsDirectory
+                        };
+
+                        using var process = new System.Diagnostics.Process { StartInfo = processStartInfo };
+                        process.Start();
+
+                        var output = await process.StandardOutput.ReadToEndAsync();
+                        var error = await process.StandardError.ReadToEndAsync();
+
+                        await process.WaitForExitAsync();
+
+                        // Parse JSON result from Python script
+                        var lastLine = output.Trim().Split('\n').LastOrDefault() ?? "";
+                        var result = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(lastLine);
+
+                        if (result != null && result.ContainsKey("success"))
+                        {
+                            var success = result["success"].ToString() == "True";
+
+                            if (success)
+                            {
+                                var dimension = result.ContainsKey("dimension") ? result["dimension"].ToString() : "unknown";
+                                var sampleValues = result.ContainsKey("sample_values")
+                                    ? System.Text.Json.JsonSerializer.Deserialize<float[]>(result["sample_values"].ToString() ?? "[]")
+                                    : Array.Empty<float>();
+
+                                message = $"✓ Connection Successful!\n\n" +
+                                         $"Method: Python\n" +
+                                         $"Embedding Model: {embeddingModel}\n" +
+                                         $"Embedding URL: {embeddingUrl}\n" +
+                                         $"Embedding Dimension: {dimension}\n" +
+                                         $"Sample values: [{string.Join(", ", sampleValues.Take(5).Select(f => f.ToString("F4")))}...]";
+                            }
+                            else
+                            {
+                                var errorMsg = result.ContainsKey("error") ? result["error"].ToString() : "Unknown error";
+                                throw new Exception(errorMsg ?? "Unknown error");
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception($"Invalid Python script output:\n{output}\n\nError:\n{error}");
+                        }
+                    }
+                    finally
+                    {
+                        // Clean up temp file
+                        if (File.Exists(tempConfigFile))
+                        {
+                            try { File.Delete(tempConfigFile); } catch { }
+                        }
+                    }
+                }
 
                 MessageBox.Show(message, "Embedding Test Result",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -289,11 +367,11 @@ namespace DiRAG.Forms
             {
                 // Show error message
                 var errorMessage = $"✗ Connection Failed!\n\n" +
-                                  $"Error: {ex.Message}\n\n";
+                                  $"Error: {ex.Message}";
 
                 if (ex.InnerException != null)
                 {
-                    errorMessage += $"Details: {ex.InnerException.Message}";
+                    errorMessage += $"\n\nDetails: {ex.InnerException.Message}";
                 }
 
                 MessageBox.Show(errorMessage, "Embedding Test Result",
