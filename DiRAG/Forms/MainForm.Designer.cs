@@ -75,6 +75,7 @@
             lblChunkSize = new Krypton.Toolkit.KryptonLabel();
             lblChunkOverlap = new Krypton.Toolkit.KryptonLabel();
             chkUseNativeEmbedding = new Krypton.Toolkit.KryptonCheckBox();
+            btnTestEmbedding = new Krypton.Toolkit.KryptonButton();
             btnSaveRAGSettings = new Krypton.Toolkit.KryptonButton();
             tabPageTheme = new TabPage();
             kryptonThemeListBox1 = new Krypton.Toolkit.KryptonThemeListBox();
@@ -464,6 +465,7 @@
             kryptonPanel3.Controls.Add(lblChunkSize);
             kryptonPanel3.Controls.Add(lblChunkOverlap);
             kryptonPanel3.Controls.Add(chkUseNativeEmbedding);
+            kryptonPanel3.Controls.Add(btnTestEmbedding);
             kryptonPanel3.Dock = DockStyle.Fill;
             kryptonPanel3.Location = new Point(3, 2);
             kryptonPanel3.Margin = new Padding(3, 2, 3, 2);
@@ -605,7 +607,7 @@
             lblChunkOverlap.Values.Text = "Chunk Overlap:";
             // 
             // chkUseNativeEmbedding
-            // 
+            //
             chkUseNativeEmbedding.Location = new Point(3, 250);
             chkUseNativeEmbedding.Margin = new Padding(3, 2, 3, 2);
             chkUseNativeEmbedding.Name = "chkUseNativeEmbedding";
@@ -613,7 +615,19 @@
             chkUseNativeEmbedding.TabIndex = 17;
             chkUseNativeEmbedding.Values.Text = "Use Native C# Embedding";
             chkUseNativeEmbedding.Visible = false;
-            // 
+            //
+            // btnTestEmbedding
+            //
+            btnTestEmbedding.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnTestEmbedding.Location = new Point(3, 102);
+            btnTestEmbedding.Margin = new Padding(3, 2, 3, 2);
+            btnTestEmbedding.Name = "btnTestEmbedding";
+            btnTestEmbedding.Size = new Size(289, 25);
+            btnTestEmbedding.TabIndex = 22;
+            btnTestEmbedding.Values.DropDownArrowColor = Color.Empty;
+            btnTestEmbedding.Values.Text = "Test Embedding";
+            btnTestEmbedding.Click += btnTestEmbedding_Click;
+            //
             // btnSaveRAGSettings
             // 
             btnSaveRAGSettings.Dock = DockStyle.Bottom;
@@ -850,6 +864,7 @@
         private Krypton.Toolkit.KryptonPanel kryptonPanel3;
         private Krypton.Toolkit.KryptonButton btnSaveChatSettings;
         private Krypton.Toolkit.KryptonButton btnSaveRAGSettings;
+        private Krypton.Toolkit.KryptonButton btnTestEmbedding;
         private TabPage tabPageTheme;
         private Krypton.Toolkit.KryptonThemeListBox kryptonThemeListBox1;
         private Krypton.Toolkit.KryptonLabel lblContextLength;

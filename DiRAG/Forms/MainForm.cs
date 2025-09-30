@@ -219,6 +219,97 @@ namespace DiRAG.Forms
             MessageBox.Show("Settings saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private async void btnTestEmbedding_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                // Get current settings from UI
+                var embeddingUrl = txtEmbeddingUrl.Text;
+                var embeddingModel = txtEmbeddingModel.Text;
+                var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
+                var useNativeEmbedding = chkUseNativeEmbedding.Checked;
+
+                // Validate settings
+                if (string.IsNullOrWhiteSpace(embeddingUrl))
+                {
+                    MessageBox.Show("Embedding URL is required.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(embeddingModel))
+                {
+                    MessageBox.Show("Embedding Model is required.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!useNativeEmbedding)
+                {
+                    MessageBox.Show("Please enable 'Use Native C# Embedding' to test the connection.\n\n" +
+                        "Python-based embedding testing is not currently supported.",
+                        "Feature Not Available",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Disable button during test
+                if (sender is Krypton.Toolkit.KryptonButton btn)
+                {
+                    btn.Enabled = false;
+                    btn.Values.Text = "Testing...";
+                }
+
+                // Create RAG service with current settings
+                var ragService = new RagService(
+                    embeddingUrl,
+                    apiKey,
+                    embeddingModel,
+                    useNativeEmbedding,
+                    contextLength: 2048,
+                    chunkSize: 500,
+                    chunkOverlap: 100
+                );
+
+                // Test with a sample text
+                const string testText = "This is a test to verify the embedding configuration.";
+                var embedding = await ragService.GenerateEmbeddingAsync(testText);
+
+                // Show success message with embedding details
+                var message = $"✓ Connection Successful!\n\n" +
+                             $"Embedding Model: {embeddingModel}\n" +
+                             $"Embedding URL: {embeddingUrl}\n" +
+                             $"Embedding Dimension: {embedding.Length}\n" +
+                             $"Sample values: [{string.Join(", ", embedding.Take(5).Select(f => f.ToString("F4")))}...]";
+
+                MessageBox.Show(message, "Embedding Test Result",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                // Show error message
+                var errorMessage = $"✗ Connection Failed!\n\n" +
+                                  $"Error: {ex.Message}\n\n";
+
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"Details: {ex.InnerException.Message}";
+                }
+
+                MessageBox.Show(errorMessage, "Embedding Test Result",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Re-enable button
+                if (sender is Krypton.Toolkit.KryptonButton btn)
+                {
+                    btn.Enabled = true;
+                    btn.Values.Text = "Test Embedding";
+                }
+            }
+        }
+
         private void InitializeLanguageComboBox()
         {
             // Clear existing items
