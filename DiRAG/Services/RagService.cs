@@ -467,12 +467,23 @@ namespace DiRAG.Services
             }
             else
             {
-                // Python embedding generation not yet implemented
-                throw new VectorizationException(
-                    "Python embedding generation is not yet implemented for query vectorization",
-                    "Configuration Error",
-                    "• Enable native embedding in Settings > Embedding Settings\n" +
-                    "• Or wait for Python embedding support to be implemented");
+                if (_embeddingClient == null)
+                {
+                    throw new VectorizationException(
+                        "Embedding client is not initialized",
+                        "Initialization Error",
+                        "• Check your API credentials and configuration\n" +
+                        "• Ensure the embedding service is properly configured in Settings");
+                }
+                else
+                {
+                    // Python embedding generation not yet implemented
+                    throw new VectorizationException(
+                        "Python embedding generation is not yet implemented for query vectorization",
+                        "Configuration Error",
+                        "• Enable native embedding in Settings > Embedding Settings\n" +
+                        "• Or wait for Python embedding support to be implemented");
+                }
             }
         }
 
