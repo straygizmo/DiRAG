@@ -272,7 +272,7 @@
             // 
             cmbClaudeModel.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbClaudeModel.DropDownWidth = 250;
-            cmbClaudeModel.Items.AddRange(new object[] { "claude-sonnet-4-20250514", "claude-opus-4-1-20250805" });
+            cmbClaudeModel.Items.AddRange(new object[] { "sonnet", "opus", "haiku" });
             cmbClaudeModel.Location = new Point(3, 165);
             cmbClaudeModel.Name = "cmbClaudeModel";
             cmbClaudeModel.Size = new Size(282, 22);

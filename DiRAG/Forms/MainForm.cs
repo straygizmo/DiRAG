@@ -192,7 +192,7 @@ namespace DiRAG.Forms
 
             // Save Claude Code settings (always save, even if not currently selected)
             Properties.Settings.Default.ClaudeCode_CLIPath = txtClaudeCodePath.Text;
-            Properties.Settings.Default.ClaudeCode_Model = cmbClaudeModel.SelectedItem?.ToString() ?? "claude-sonnet-4-20250514";
+            Properties.Settings.Default.ClaudeCode_Model = cmbClaudeModel.SelectedItem?.ToString() ?? "sonnet";
 
             // Save embedding settings
             Properties.Settings.Default.Embedding_Url = txtEmbeddingUrl.Text;

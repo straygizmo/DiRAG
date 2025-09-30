@@ -51,7 +51,7 @@
       <Value Profile="(Default)">claude</Value>
     </Setting>
     <Setting Name="ClaudeCode_Model" Type="System.String" Scope="User">
-      <Value Profile="(Default)">claude-3-5-sonnet-latest</Value>
+      <Value Profile="(Default)">sonnet</Value>
     </Setting>
     <Setting Name="RAG_TopKChunks" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>

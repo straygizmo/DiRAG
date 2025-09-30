@@ -12,7 +12,7 @@ namespace DiRAG.Services
         public ClaudeCodeChatService(string cliPath, string model)
         {
             _cliPath = cliPath ?? "claude";
-            _model = model ?? "claude-sonnet-4-20250514";
+            _model = model ?? "sonnet";
             _conversationHistory = new List<string>();
         }
 
@@ -33,7 +33,7 @@ namespace DiRAG.Services
                 var processStartInfo = new ProcessStartInfo
                 {
                     FileName = _cliPath,
-                    Arguments = $"-p \"{EscapeArgument(userInput)}\"",
+                    Arguments = $"-p \"{EscapeArgument(userInput)}\" --model {_model}",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

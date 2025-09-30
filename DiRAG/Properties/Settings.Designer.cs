@@ -198,7 +198,7 @@ namespace DiRAG.Properties {
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("claude-sonnet-4-20250514")]
+        [global::System.Configuration.DefaultSettingValueAttribute("sonnet")]
         public string ClaudeCode_Model {
             get {
                 return ((string)(this["ClaudeCode_Model"]));
