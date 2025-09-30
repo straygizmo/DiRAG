@@ -84,6 +84,27 @@
         // Get initial checked folders
         checkedFolders = MainForm.GetCheckedFolders();
 
+        // Display selected directories on startup
+        if (checkedFolders.Count > 0)
+        {
+            var foldersList = string.Join("\n", checkedFolders.Select((f, i) => $"{i + 1}. {f}"));
+            chatHistory.Add(new ChatMessage
+            {
+                Text = $"[{Localization.GetString("SelectedDirectories")}]\n{foldersList}",
+                IsUser = true,
+                Type = MessageType.Info
+            });
+        }
+        else
+        {
+            chatHistory.Add(new ChatMessage
+            {
+                Text = $"[{Localization.GetString("SelectedDirectories")}]\n{Localization.GetString("NoDirectoriesSelected")}",
+                IsUser = true,
+                Type = MessageType.Info
+            });
+        }
+
         // Subscribe to culture change events
         if (Localization != null)
         {
