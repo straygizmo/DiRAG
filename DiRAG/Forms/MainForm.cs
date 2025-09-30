@@ -137,24 +137,9 @@ namespace DiRAG.Forms
             var apiProvider = Properties.Settings.Default.API_Provider;
             cmbAPIProvider.SelectedItem = apiProvider;
 
-            // Load OpenAI settings
-            txtBaseUrl.Text = Properties.Settings.Default.OpenAI_BaseUrl;
-            txtApiKey.Text = Properties.Settings.Default.OpenAI_ApiKey;
-            txtModel.Text = string.IsNullOrEmpty(Properties.Settings.Default.OpenAI_Model)
-                ? "gpt-4o"
-                : Properties.Settings.Default.OpenAI_Model;
-
-            // Load Claude Code settings
-            txtClaudeCodePath.Text = Properties.Settings.Default.ClaudeCode_CLIPath;
-            var claudeModel = Properties.Settings.Default.ClaudeCode_Model;
-            if (cmbClaudeModel.Items.Contains(claudeModel))
-            {
-                cmbClaudeModel.SelectedItem = claudeModel;
-            }
-            else
-            {
-                cmbClaudeModel.SelectedIndex = 0; // Default to first item
-            }
+            // Load provider-specific settings
+            openAISettingsControl.LoadSettings();
+            claudeCodeSettingsControl.LoadSettings();
 
             // Load embedding settings
             txtEmbeddingUrl.Text = Properties.Settings.Default.Embedding_Url;
@@ -165,10 +150,6 @@ namespace DiRAG.Forms
             chkUseNativeEmbedding.Checked = Properties.Settings.Default.UseNativeEmbedding;
             txtTopKChunks.Text = Properties.Settings.Default.RAG_TopKChunks.ToString();
             txtMaxContextLength.Text = Properties.Settings.Default.RAG_MaxContextLength.ToString();
-
-            // Load Use Context in System Message setting
-            chkUseContextInSystemMessage.Checked = Properties.Settings.Default.UseContextInSystemMessage;
-
 
             var selectedIndex = Properties.Settings.Default.UI_Theme;
             if (selectedIndex >= 0)
@@ -185,14 +166,9 @@ namespace DiRAG.Forms
             // Save API Provider selection
             Properties.Settings.Default.API_Provider = cmbAPIProvider.SelectedItem?.ToString() ?? "OpenAI Compatible";
 
-            // Save OpenAI settings (always save, even if not currently selected)
-            Properties.Settings.Default.OpenAI_BaseUrl = txtBaseUrl.Text;
-            Properties.Settings.Default.OpenAI_ApiKey = txtApiKey.Text;
-            Properties.Settings.Default.OpenAI_Model = txtModel.Text;
-
-            // Save Claude Code settings (always save, even if not currently selected)
-            Properties.Settings.Default.ClaudeCode_CLIPath = txtClaudeCodePath.Text;
-            Properties.Settings.Default.ClaudeCode_Model = cmbClaudeModel.SelectedItem?.ToString() ?? "sonnet";
+            // Save provider-specific settings (always save, even if not currently selected)
+            openAISettingsControl.SaveSettings();
+            claudeCodeSettingsControl.SaveSettings();
 
             // Save embedding settings
             Properties.Settings.Default.Embedding_Url = txtEmbeddingUrl.Text;
@@ -210,9 +186,6 @@ namespace DiRAG.Forms
                 Properties.Settings.Default.RAG_MaxContextLength = maxContextLength;
 
             Properties.Settings.Default.UseNativeEmbedding = chkUseNativeEmbedding.Checked;
-
-            // Save Use Context in System Message setting
-            Properties.Settings.Default.UseContextInSystemMessage = chkUseContextInSystemMessage.Checked;
 
             Properties.Settings.Default.Save();
 
@@ -438,13 +411,7 @@ namespace DiRAG.Forms
 
             // Update labels in Settings
             lblAPIProvider.Values.Text = loc.GetString("APIProvider") + ":";
-            lblBaseUrl.Values.Text = loc.GetString("BaseURL") + ":";
-            lblApiKey.Values.Text = loc.GetString("APIKey") + ":";
-            lblModel.Values.Text = loc.GetString("Model") + ":";
             lblLanguage.Values.Text = loc.GetString("Language") + ":";
-            lblClaudeCodePath.Values.Text = loc.GetString("ClaudeCodePath") + ":";
-            lblClaudeModel.Values.Text = loc.GetString("ClaudeModel") + ":";
-            chkUseContextInSystemMessage.Values.Text = loc.GetString("UseContextInSystemMessage");
 
             // Update RAG Settings labels
             lblEmbeddingUrl.Values.Text = loc.GetString("EmbeddingURL") + ":";
@@ -481,48 +448,19 @@ namespace DiRAG.Forms
         {
             if (provider == "Claude Code")
             {
-                // Show Claude Code controls
-                lblClaudeCodePath.Visible = true;
-                txtClaudeCodePath.Visible = true;
-                lblClaudeModel.Visible = true;
-                cmbClaudeModel.Visible = true;
+                // Show Claude Code settings panel
+                claudeCodeSettingsControl.Visible = true;
 
-                // Hide OpenAI controls
-                lblBaseUrl.Visible = false;
-                txtBaseUrl.Visible = false;
-                lblApiKey.Visible = false;
-                txtApiKey.Visible = false;
-                lblModel.Visible = false;
-                txtModel.Visible = false;
+                // Hide OpenAI settings panel
+                openAISettingsControl.Visible = false;
             }
             else // OpenAI Compatible
             {
-                // Show OpenAI controls
-                lblBaseUrl.Visible = true;
-                txtBaseUrl.Visible = true;
-                lblApiKey.Visible = true;
-                txtApiKey.Visible = true;
-                lblModel.Visible = true;
-                txtModel.Visible = true;
+                // Show OpenAI settings panel
+                openAISettingsControl.Visible = true;
 
-                // Hide Claude Code controls
-                lblClaudeCodePath.Visible = false;
-                txtClaudeCodePath.Visible = false;
-                lblClaudeModel.Visible = false;
-                cmbClaudeModel.Visible = false;
-            }
-
-            // Update checkbox state based on provider
-            if (provider == "Claude Code")
-            {
-                // Claude Code doesn't support system messages, so disable and uncheck
-                chkUseContextInSystemMessage.Enabled = false;
-                chkUseContextInSystemMessage.Checked = false;
-            }
-            else // OpenAI Compatible
-            {
-                // Enable the checkbox for OpenAI Compatible APIs
-                chkUseContextInSystemMessage.Enabled = true;
+                // Hide Claude Code settings panel
+                claudeCodeSettingsControl.Visible = false;
             }
         }
 
