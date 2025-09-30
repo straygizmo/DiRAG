@@ -6,7 +6,7 @@
       <Value Profile="(Default)">http://localhost:1234</Value>
     </Setting>
     <Setting Name="OpenAI_ApiKey" Type="System.String" Scope="User">
-      <Value Profile="(Default)">abc</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Chat_FontSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">14</Value>
@@ -30,7 +30,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="OpenAI_Model" Type="System.String" Scope="User">
-      <Value Profile="(Default)">gemma3n</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RAG_ContextLength" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2048</Value>

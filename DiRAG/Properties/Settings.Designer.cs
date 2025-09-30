@@ -37,7 +37,7 @@ namespace DiRAG.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("abc")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string OpenAI_ApiKey {
             get {
                 return ((string)(this["OpenAI_ApiKey"]));
@@ -150,7 +150,7 @@ namespace DiRAG.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("gemma3n")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string OpenAI_Model {
             get {
                 return ((string)(this["OpenAI_Model"]));
