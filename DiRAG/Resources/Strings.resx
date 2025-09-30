@@ -81,8 +81,17 @@
   <data name="NoDirectoriesSelected" xml:space="preserve">
     <value>No directories are currently selected. Please check directories in the 'Dir to RAG' tab to enable RAG functionality.</value>
   </data>
+  <data name="ClearChatTitle" xml:space="preserve">
+    <value>Clear Chat History</value>
+  </data>
   <data name="ClearChatConfirmation" xml:space="preserve">
     <value>Are you sure you want to clear the chat history? This action cannot be undone.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
   </data>
   <data name="LastContextUsed" xml:space="preserve">
     <value>Last Context Used</value>

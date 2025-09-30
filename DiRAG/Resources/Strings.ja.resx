@@ -81,8 +81,17 @@
   <data name="NoDirectoriesSelected" xml:space="preserve">
     <value>ディレクトリが選択されていません。RAG機能を有効にするには、「Dir to RAG」タブでディレクトリを選択してください。</value>
   </data>
+  <data name="ClearChatTitle" xml:space="preserve">
+    <value>チャット履歴をクリア</value>
+  </data>
   <data name="ClearChatConfirmation" xml:space="preserve">
     <value>チャット履歴をクリアしてもよろしいですか？この操作は元に戻せません。</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
   </data>
   <data name="LastContextUsed" xml:space="preserve">
     <value>最後に使用したコンテキスト</value>

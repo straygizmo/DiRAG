@@ -55,6 +55,9 @@
         <button class="btn btn-primary" @onclick="SendMessageAsync">&#x2197;</button>
     </div>
 </div>
+
+<DiRAG.Pages.Components.ConfirmDialog @ref="confirmDialog" OnClose="HandleConfirmDialogResult" />
+
 @code {
     private List<ChatMessage> chatHistory = new List<ChatMessage>();
     private string currentMessage = string.Empty;
@@ -65,6 +68,8 @@
     private string modelName = "";
     private string lastContext = "";
     private List<string> checkedFolders = new List<string>();
+    private DiRAG.Pages.Components.ConfirmDialog confirmDialog = null!;
+    private bool clearChatPending = false;
 
     protected override void OnInitialized()
     {
@@ -346,10 +351,21 @@
         if (chatHistory.Count == 0)
             return;
 
-        // Show confirmation dialog using JavaScript
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", Localization.GetString("ClearChatConfirmation"));
+        // Set flag to indicate clear chat is pending
+        clearChatPending = true;
 
-        if (confirmed)
+        // Show confirmation dialog using custom component
+        await confirmDialog.ShowAsync(
+            Localization.GetString("ClearChatTitle"),
+            Localization.GetString("ClearChatConfirmation"),
+            Localization.GetString("OK"),
+            Localization.GetString("Cancel")
+        );
+    }
+
+    private void HandleConfirmDialogResult(bool confirmed)
+    {
+        if (clearChatPending && confirmed)
         {
             // Clear the chat history
             chatHistory.Clear();
@@ -366,5 +382,8 @@
             // Update the UI
             StateHasChanged();
         }
+
+        // Reset the pending flag
+        clearChatPending = false;
     }
 }
