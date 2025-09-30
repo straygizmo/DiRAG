@@ -1,9 +1,0 @@
-{
-  "folders": ["C:\\Users\\SuperFly\\Desktop\\rag_test"],
-  "embedding_url": "http://localhost:1234",
-  "embedding_model": "text-embedding-embeddinggemma-300m",
-  "context_length": 2048,
-  "chunk_size": 500,
-  "chunk_overlap": 100,
-  "api_key": "test"
-}

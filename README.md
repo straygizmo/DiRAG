@@ -29,13 +29,12 @@ git clone https://github.com/straygizmo/DiRAG.git
 cd DiRAG
 ```
 
-2. Open `DiRAG.sln` in Visual Studio 2022
+2. Build the solution:
+```bash
+dotnet build .\DiRAG.sln
+```
 
-3. Restore NuGet packages (Visual Studio should do this automatically)
-
-4. Build the solution (F6 or Build → Build Solution)
-
-5. Run the application (F5 or Debug → Start Debugging)
+3. Run the application (F5 or Debug → Start Debugging in Visual Studio, or run the executable from the build output)
 
 ## Configuration
 
