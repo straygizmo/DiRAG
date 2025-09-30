@@ -20,6 +20,13 @@
                 <button class="btn btn-sm btn-outline-primary ms-2" @onclick="ClearChat">@Localization.GetString("NewChat")</button>
             </div>
         </div>
+        <div class="d-flex align-items-center mt-2">
+            <label class="text-muted small me-2">@Localization.GetString("FontSize"):</label>
+            <input type="range" class="form-range flex-grow-1" style="max-width: 200px;"
+                   min="10" max="32" step="1" value="@fontSize"
+                   @oninput="OnFontSizeChanged" />
+            <span class="text-muted small ms-2">@fontSize px</span>
+        </div>
     </div>
     <div id="chatContainer" class="border rounded p-3 mb-3 flex-grow-1" style="overflow-y: auto; font-size: @(fontSize)px;">
         @foreach (var message in chatHistory)
@@ -385,5 +392,17 @@
 
         // Reset the pending flag
         clearChatPending = false;
+    }
+
+    private void OnFontSizeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int newSize))
+        {
+            fontSize = newSize;
+            // Save the font size to settings
+            DiRAG.Properties.Settings.Default.Chat_FontSize = fontSize;
+            DiRAG.Properties.Settings.Default.Save();
+            StateHasChanged();
+        }
     }
 }

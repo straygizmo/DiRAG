@@ -52,8 +52,6 @@
             txtBaseUrl = new Krypton.Toolkit.KryptonTextBox();
             lblModel = new Krypton.Toolkit.KryptonLabel();
             lblBaseUrl = new Krypton.Toolkit.KryptonLabel();
-            lblFontSize = new Krypton.Toolkit.KryptonLabel();
-            trackBarFontSize = new TrackBar();
             lblLanguage = new Krypton.Toolkit.KryptonLabel();
             cmbLanguage = new Krypton.Toolkit.KryptonComboBox();
             txtApiKey = new Krypton.Toolkit.KryptonTextBox();
@@ -104,7 +102,6 @@
             kryptonPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)cmbClaudeModel).BeginInit();
             ((System.ComponentModel.ISupportInitialize)cmbAPIProvider).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarFontSize).BeginInit();
             ((System.ComponentModel.ISupportInitialize)cmbLanguage).BeginInit();
             tabPageRAG.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).BeginInit();
@@ -259,8 +256,6 @@
             kryptonPanel2.Controls.Add(txtBaseUrl);
             kryptonPanel2.Controls.Add(lblModel);
             kryptonPanel2.Controls.Add(lblBaseUrl);
-            kryptonPanel2.Controls.Add(lblFontSize);
-            kryptonPanel2.Controls.Add(trackBarFontSize);
             kryptonPanel2.Controls.Add(lblLanguage);
             kryptonPanel2.Controls.Add(cmbLanguage);
             kryptonPanel2.Controls.Add(txtApiKey);
@@ -375,33 +370,10 @@
             lblBaseUrl.Size = new Size(63, 20);
             lblBaseUrl.TabIndex = 0;
             lblBaseUrl.Values.Text = "Base URL:";
-            // 
-            // lblFontSize
-            // 
-            lblFontSize.Location = new Point(3, 208);
-            lblFontSize.Margin = new Padding(3, 2, 3, 2);
-            lblFontSize.Name = "lblFontSize";
-            lblFontSize.Size = new Size(63, 20);
-            lblFontSize.TabIndex = 11;
-            lblFontSize.Values.Text = "Font Size:";
-            // 
-            // trackBarFontSize
-            // 
-            trackBarFontSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            trackBarFontSize.Location = new Point(3, 230);
-            trackBarFontSize.Margin = new Padding(3, 2, 3, 2);
-            trackBarFontSize.Maximum = 32;
-            trackBarFontSize.Minimum = 10;
-            trackBarFontSize.Name = "trackBarFontSize";
-            trackBarFontSize.Size = new Size(248, 45);
-            trackBarFontSize.TabIndex = 5;
-            trackBarFontSize.TickFrequency = 2;
-            trackBarFontSize.Value = 14;
-            trackBarFontSize.Scroll += trackBarFontSize_Scroll;
             //
             // lblLanguage
             //
-            lblLanguage.Location = new Point(3, 305);
+            lblLanguage.Location = new Point(3, 208);
             lblLanguage.Margin = new Padding(3, 2, 3, 2);
             lblLanguage.Name = "lblLanguage";
             lblLanguage.Size = new Size(66, 20);
@@ -413,7 +385,7 @@
             cmbLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbLanguage.DropDownWidth = 289;
-            cmbLanguage.Location = new Point(3, 327);
+            cmbLanguage.Location = new Point(3, 230);
             cmbLanguage.Margin = new Padding(3, 2, 3, 2);
             cmbLanguage.Name = "cmbLanguage";
             cmbLanguage.Size = new Size(289, 21);
@@ -827,7 +799,6 @@
             kryptonPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)cmbClaudeModel).EndInit();
             ((System.ComponentModel.ISupportInitialize)cmbAPIProvider).EndInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarFontSize).EndInit();
             ((System.ComponentModel.ISupportInitialize)cmbLanguage).EndInit();
             tabPageRAG.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).EndInit();
@@ -866,8 +837,6 @@
         private Krypton.Toolkit.KryptonTextBox txtEmbeddingUrl;
         private Krypton.Toolkit.KryptonLabel lblEmbeddingModel;
         private Krypton.Toolkit.KryptonTextBox txtEmbeddingModel;
-        private Krypton.Toolkit.KryptonLabel lblFontSize;
-        private TrackBar trackBarFontSize;
         private Krypton.Toolkit.KryptonLabel lblLanguage;
         private Krypton.Toolkit.KryptonComboBox cmbLanguage;
         private Krypton.Toolkit.KryptonManager kryptonManager1;

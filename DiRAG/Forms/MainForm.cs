@@ -169,7 +169,6 @@ namespace DiRAG.Forms
             // Load Use Context in System Message setting
             chkUseContextInSystemMessage.Checked = Properties.Settings.Default.UseContextInSystemMessage;
 
-            trackBarFontSize.Value = Properties.Settings.Default.Chat_FontSize;
 
             var selectedIndex = Properties.Settings.Default.UI_Theme;
             if (selectedIndex >= 0)
@@ -198,7 +197,6 @@ namespace DiRAG.Forms
             // Save embedding settings
             Properties.Settings.Default.Embedding_Url = txtEmbeddingUrl.Text;
             Properties.Settings.Default.Embedding_Model = txtEmbeddingModel.Text;
-            Properties.Settings.Default.Chat_FontSize = trackBarFontSize.Value;
 
             if (int.TryParse(txtContextLength.Text, out var contextLength))
                 Properties.Settings.Default.RAG_ContextLength = contextLength;
@@ -274,7 +272,6 @@ namespace DiRAG.Forms
             lblBaseUrl.Values.Text = loc.GetString("BaseURL") + ":";
             lblApiKey.Values.Text = loc.GetString("APIKey") + ":";
             lblModel.Values.Text = loc.GetString("Model") + ":";
-            lblFontSize.Values.Text = loc.GetString("FontSize") + ":";
             lblLanguage.Values.Text = loc.GetString("Language") + ":";
             lblClaudeCodePath.Values.Text = loc.GetString("ClaudeCodePath") + ":";
             lblClaudeModel.Values.Text = loc.GetString("ClaudeModel") + ":";
@@ -304,10 +301,6 @@ namespace DiRAG.Forms
             btnLoadMcpServers.Values.Text = loc.GetString("Load");
         }
 
-        private void trackBarFontSize_Scroll(object? sender, EventArgs e)
-        {
-            Properties.Settings.Default.Chat_FontSize = trackBarFontSize.Value;
-        }
 
         private void cmbAPIProvider_SelectedIndexChanged(object? sender, EventArgs e)
         {
