@@ -48,6 +48,9 @@ namespace DiRAG.Forms
             // Add this form as a singleton so it can be injected
             services.AddSingleton(this);
 
+            // Add localization service
+            services.AddSingleton(Program.LocalizationService!);
+
             // Add RAG service
             services.AddScoped<IRagService>(serviceProvider =>
             {
@@ -126,6 +129,10 @@ namespace DiRAG.Forms
 
         private void LoadSettings()
         {
+            // Load Language selection
+            InitializeLanguageComboBox();
+            UpdateUILabels(); // Apply current language labels
+
             // Load API Provider selection
             var apiProvider = Properties.Settings.Default.API_Provider;
             cmbAPIProvider.SelectedItem = apiProvider;
@@ -212,6 +219,89 @@ namespace DiRAG.Forms
             Properties.Settings.Default.Save();
 
             MessageBox.Show("Settings saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void InitializeLanguageComboBox()
+        {
+            // Clear existing items
+            cmbLanguage.Items.Clear();
+
+            // Add language options
+            cmbLanguage.Items.Add("English (US)");
+            cmbLanguage.Items.Add("日本語 (Japanese)");
+
+            // Set the current language
+            var currentLanguage = Properties.Settings.Default.PreferredLanguage;
+            if (currentLanguage == "ja-JP")
+            {
+                cmbLanguage.SelectedIndex = 1;
+            }
+            else
+            {
+                cmbLanguage.SelectedIndex = 0;
+            }
+        }
+
+        private void cmbLanguage_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (Program.LocalizationService == null) return;
+
+            var selectedIndex = cmbLanguage.SelectedIndex;
+            var cultureName = selectedIndex == 1 ? "ja-JP" : "en-US";
+
+            // Change the culture
+            Program.LocalizationService.ChangeCulture(cultureName);
+
+            // Update UI labels
+            UpdateUILabels();
+        }
+
+        private void UpdateUILabels()
+        {
+            var loc = Program.LocalizationService;
+            if (loc == null) return;
+
+            // Update tab names
+            tabPageDir.Text = loc.GetString("TabDirToRag");
+            tabPageSettings.Text = loc.GetString("TabSettings");
+            tabPageChat.Text = loc.GetString("TabChat");
+            tabPageRAG.Text = loc.GetString("TabRAG");
+            tabPageTheme.Text = loc.GetString("TabTheme");
+            tabPageMCP.Text = loc.GetString("TabMCP");
+
+            // Update labels in Settings
+            lblAPIProvider.Values.Text = loc.GetString("APIProvider") + ":";
+            lblBaseUrl.Values.Text = loc.GetString("BaseURL") + ":";
+            lblApiKey.Values.Text = loc.GetString("APIKey") + ":";
+            lblModel.Values.Text = loc.GetString("Model") + ":";
+            lblFontSize.Values.Text = loc.GetString("FontSize") + ":";
+            lblLanguage.Values.Text = loc.GetString("Language") + ":";
+            lblClaudeCodePath.Values.Text = loc.GetString("ClaudeCodePath") + ":";
+            lblClaudeModel.Values.Text = loc.GetString("ClaudeModel") + ":";
+            chkUseContextInSystemMessage.Values.Text = loc.GetString("UseContextInSystemMessage");
+
+            // Update RAG Settings labels
+            lblEmbeddingUrl.Values.Text = loc.GetString("EmbeddingURL") + ":";
+            lblEmbeddingModel.Values.Text = loc.GetString("EmbeddingModel") + ":";
+            lblContextLength.Values.Text = loc.GetString("ContextLength") + ":";
+            lblChunkSize.Values.Text = loc.GetString("ChunkSize") + ":";
+            lblChunkOverlap.Values.Text = loc.GetString("ChunkOverlap") + ":";
+            lblMaxContextLength.Values.Text = loc.GetString("MaxContextLength") + ":";
+            lblTopKChunks.Values.Text = loc.GetString("TopKChunks") + ":";
+            chkUseNativeEmbedding.Values.Text = loc.GetString("UseNativeEmbedding");
+
+            // Update button texts
+            btnSaveChatSettings.Values.Text = loc.GetString("Save");
+            btnSaveRAGSettings.Values.Text = loc.GetString("Save");
+            tspRefresh.Text = loc.GetString("Refresh");
+            tsbIndexing.Text = loc.GetString("Indexing");
+
+            // Update MCP buttons
+            btnAddMcpServer.Values.Text = loc.GetString("Add");
+            btnEditMcpServer.Values.Text = loc.GetString("Edit");
+            btnRemoveMcpServer.Values.Text = loc.GetString("Remove");
+            btnTestMcpServer.Values.Text = loc.GetString("Test");
+            btnLoadMcpServers.Values.Text = loc.GetString("Load");
         }
 
         private void trackBarFontSize_Scroll(object? sender, EventArgs e)

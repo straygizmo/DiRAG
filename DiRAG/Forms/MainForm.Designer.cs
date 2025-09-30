@@ -54,6 +54,8 @@
             lblBaseUrl = new Krypton.Toolkit.KryptonLabel();
             lblFontSize = new Krypton.Toolkit.KryptonLabel();
             trackBarFontSize = new TrackBar();
+            lblLanguage = new Krypton.Toolkit.KryptonLabel();
+            cmbLanguage = new Krypton.Toolkit.KryptonComboBox();
             txtApiKey = new Krypton.Toolkit.KryptonTextBox();
             lblApiKey = new Krypton.Toolkit.KryptonLabel();
             chkUseContextInSystemMessage = new Krypton.Toolkit.KryptonCheckBox();
@@ -103,6 +105,7 @@
             ((System.ComponentModel.ISupportInitialize)cmbClaudeModel).BeginInit();
             ((System.ComponentModel.ISupportInitialize)cmbAPIProvider).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBarFontSize).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)cmbLanguage).BeginInit();
             tabPageRAG.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).BeginInit();
             kryptonPanel3.SuspendLayout();
@@ -258,6 +261,8 @@
             kryptonPanel2.Controls.Add(lblBaseUrl);
             kryptonPanel2.Controls.Add(lblFontSize);
             kryptonPanel2.Controls.Add(trackBarFontSize);
+            kryptonPanel2.Controls.Add(lblLanguage);
+            kryptonPanel2.Controls.Add(cmbLanguage);
             kryptonPanel2.Controls.Add(txtApiKey);
             kryptonPanel2.Controls.Add(lblApiKey);
             kryptonPanel2.Controls.Add(chkUseContextInSystemMessage);
@@ -393,7 +398,28 @@
             trackBarFontSize.TickFrequency = 2;
             trackBarFontSize.Value = 14;
             trackBarFontSize.Scroll += trackBarFontSize_Scroll;
-            // 
+            //
+            // lblLanguage
+            //
+            lblLanguage.Location = new Point(3, 305);
+            lblLanguage.Margin = new Padding(3, 2, 3, 2);
+            lblLanguage.Name = "lblLanguage";
+            lblLanguage.Size = new Size(66, 20);
+            lblLanguage.TabIndex = 13;
+            lblLanguage.Values.Text = "Language:";
+            //
+            // cmbLanguage
+            //
+            cmbLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbLanguage.DropDownWidth = 289;
+            cmbLanguage.Location = new Point(3, 327);
+            cmbLanguage.Margin = new Padding(3, 2, 3, 2);
+            cmbLanguage.Name = "cmbLanguage";
+            cmbLanguage.Size = new Size(289, 21);
+            cmbLanguage.TabIndex = 14;
+            cmbLanguage.SelectedIndexChanged += cmbLanguage_SelectedIndexChanged;
+            //
             // txtApiKey
             // 
             txtApiKey.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -415,8 +441,8 @@
             lblApiKey.Values.Text = "API Key:";
             // 
             // chkUseContextInSystemMessage
-            // 
-            chkUseContextInSystemMessage.Location = new Point(3, 280);
+            //
+            chkUseContextInSystemMessage.Location = new Point(3, 360);
             chkUseContextInSystemMessage.Margin = new Padding(3, 2, 3, 2);
             chkUseContextInSystemMessage.Name = "chkUseContextInSystemMessage";
             chkUseContextInSystemMessage.Size = new Size(197, 20);
@@ -802,6 +828,7 @@
             ((System.ComponentModel.ISupportInitialize)cmbClaudeModel).EndInit();
             ((System.ComponentModel.ISupportInitialize)cmbAPIProvider).EndInit();
             ((System.ComponentModel.ISupportInitialize)trackBarFontSize).EndInit();
+            ((System.ComponentModel.ISupportInitialize)cmbLanguage).EndInit();
             tabPageRAG.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).EndInit();
             kryptonPanel3.ResumeLayout(false);
@@ -841,6 +868,8 @@
         private Krypton.Toolkit.KryptonTextBox txtEmbeddingModel;
         private Krypton.Toolkit.KryptonLabel lblFontSize;
         private TrackBar trackBarFontSize;
+        private Krypton.Toolkit.KryptonLabel lblLanguage;
+        private Krypton.Toolkit.KryptonComboBox cmbLanguage;
         private Krypton.Toolkit.KryptonManager kryptonManager1;
         private ToolTip toolTip1;
         private Krypton.Toolkit.KryptonStatusStrip kryptonStatusStrip1;

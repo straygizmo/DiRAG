@@ -4,19 +4,20 @@
 @inject IChatService ChatService
 @inject MainForm MainForm
 @inject IJSRuntime JSRuntime
+@inject ILocalizationService Localization
 @implements IDisposable
 
 <div class="container-fluid d-flex flex-column vh-100 p-3">
     <div class="mb-3">
         <div class="d-flex justify-content-between align-items-center">
             <div class="text-muted small">
-                <span class="me-3">Provider: <strong>@apiProvider</strong></span>
-                <span>Model: <strong>@modelName</strong></span>
+                <span class="me-3">@Localization.GetString("Provider"): <strong>@apiProvider</strong></span>
+                <span>@Localization.GetString("Model"): <strong>@modelName</strong></span>
             </div>
             <div>
-                <button class="btn btn-sm btn-outline-secondary" @onclick="ShowSelectedDirectories">Selected Directories</button>
-                <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ShowContextDialog">Context</button>
-                <button class="btn btn-sm btn-outline-primary ms-2" @onclick="ClearChat">New Chat</button>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="ShowSelectedDirectories">@Localization.GetString("SelectedDirectories")</button>
+                <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ShowContextDialog">@Localization.GetString("Context")</button>
+                <button class="btn btn-sm btn-outline-primary ms-2" @onclick="ClearChat">@Localization.GetString("NewChat")</button>
             </div>
         </div>
     </div>
@@ -49,7 +50,7 @@
         }
     </div>
     <div class="input-group">
-        <input type="text" class="form-control" placeholder="Enter message..."
+        <input type="text" class="form-control" placeholder="@Localization.GetString("EnterMessage")"
                @bind="currentMessage" @bind:event="oninput" @onkeypress="@(async e => { if (e.Key == "Enter") await SendMessageAsync(); })" />
         <button class="btn btn-primary" @onclick="SendMessageAsync">&#x2197;</button>
     </div>
@@ -82,6 +83,12 @@
 
         // Get initial checked folders
         checkedFolders = MainForm.GetCheckedFolders();
+
+        // Subscribe to culture change events
+        if (Localization != null)
+        {
+            Localization.CultureChanged += OnCultureChanged;
+        }
 
         timer = new System.Threading.Timer(async _ =>
         {
@@ -118,7 +125,7 @@
                             var foldersList = string.Join("\n", newCheckedFolders.Select((f, i) => $"{i + 1}. {f}"));
                             chatHistory.Add(new ChatMessage
                             {
-                                Text = $"[Selected Directories]\n{foldersList}",
+                                Text = $"[{Localization.GetString("SelectedDirectories")}]\n{foldersList}",
                                 IsUser = true,
                                 Type = MessageType.Info
                             });
@@ -127,7 +134,7 @@
                         {
                             chatHistory.Add(new ChatMessage
                             {
-                                Text = "[Selected Directories]\nNo directories are currently selected. Please check directories in the 'Dir to RAG' tab to enable RAG functionality.",
+                                Text = $"[{Localization.GetString("SelectedDirectories")}]\n{Localization.GetString("NoDirectoriesSelected")}",
                                 IsUser = true,
                                 Type = MessageType.Info
                             });
@@ -172,7 +179,10 @@
 
             // Determine message type based on response content
             var messageType = MessageType.Normal;
-            if (response.StartsWith("[Vectorization Error") || response.StartsWith("[Error]"))
+            var errorPrefix = $"[{Localization.GetString("Error")}]";
+            var vectorizationErrorPrefix = $"[{Localization.GetString("VectorizationError")}";
+            if (response.StartsWith(vectorizationErrorPrefix) || response.StartsWith(errorPrefix) ||
+                response.StartsWith("[Vectorization Error") || response.StartsWith("[Error]"))
             {
                 messageType = MessageType.Error;
             }
@@ -184,14 +194,14 @@
             isWaitingForResponse = false;
 
             // Create error message with exception details
-            var errorMessage = $"[Error]\n\nFailed to send message to the chat service.\n\n" +
-                             $"Error Type: {ex.GetType().Name}\n" +
-                             $"Error Message: {ex.Message}\n\n" +
-                             "Suggested actions:\n" +
-                             "• Check your API configuration in Settings\n" +
-                             "• Verify your internet connection\n" +
-                             "• Check if the service is available\n" +
-                             "• Review the error details above";
+            var errorMessage = $"[{Localization.GetString("Error")}]\n\n{Localization.GetString("FailedToSendMessage")}\n\n" +
+                             $"{Localization.GetString("ErrorType")}: {ex.GetType().Name}\n" +
+                             $"{Localization.GetString("ErrorMessage")}: {ex.Message}\n\n" +
+                             $"{Localization.GetString("SuggestedActions")}:\n" +
+                             $"• {Localization.GetString("CheckAPIConfiguration")}\n" +
+                             $"• {Localization.GetString("VerifyInternetConnection")}\n" +
+                             $"• {Localization.GetString("CheckServiceAvailability")}\n" +
+                             $"• {Localization.GetString("ReviewErrorDetails")}";
 
             // Add error message to chat history
             chatHistory.Add(new ChatMessage {
@@ -208,6 +218,18 @@
     public void Dispose()
     {
         timer?.Dispose();
+
+        // Unsubscribe from culture change events
+        if (Localization != null)
+        {
+            Localization.CultureChanged -= OnCultureChanged;
+        }
+    }
+
+    private void OnCultureChanged(object? sender, System.Globalization.CultureInfo e)
+    {
+        // Refresh UI when culture changes
+        InvokeAsync(StateHasChanged);
     }
 
     private enum MessageType
@@ -254,7 +276,7 @@
         {
             // For now, just add the context to chat history as a system message
             chatHistory.Add(new ChatMessage {
-                Text = "[Last Context Used]\n" + lastContext,
+                Text = $"[{Localization.GetString("LastContextUsed")}]\n" + lastContext,
                 IsUser = true,
                 Type = MessageType.Info
             });
@@ -263,7 +285,7 @@
         else
         {
             chatHistory.Add(new ChatMessage {
-                Text = "No context has been used yet. Select folders in the Dir to RAG tab to enable RAG.",
+                Text = Localization.GetString("NoContextUsedYet"),
                 IsUser = true,
                 Type = MessageType.Info
             });
@@ -280,7 +302,7 @@
         {
             var foldersList = string.Join("\n", folders.Select((f, i) => $"{i + 1}. {f}"));
             chatHistory.Add(new ChatMessage {
-                Text = $"[Selected Directories]\n{foldersList}",
+                Text = $"[{Localization.GetString("SelectedDirectories")}]\n{foldersList}",
                 IsUser = true,
                 Type = MessageType.Info
             });
@@ -288,7 +310,7 @@
         else
         {
             chatHistory.Add(new ChatMessage {
-                Text = "[Selected Directories]\nNo directories are currently selected. Please check directories in the 'Dir to RAG' tab to enable RAG functionality.",
+                Text = $"[{Localization.GetString("SelectedDirectories")}]\n{Localization.GetString("NoDirectoriesSelected")}",
                 IsUser = true,
                 Type = MessageType.Info
             });
@@ -304,7 +326,7 @@
             return;
 
         // Show confirmation dialog using JavaScript
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to clear the chat history? This action cannot be undone.");
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", Localization.GetString("ClearChatConfirmation"));
 
         if (confirmed)
         {

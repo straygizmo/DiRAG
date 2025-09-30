@@ -255,5 +255,17 @@ namespace DiRAG.Properties {
                 this["MCP_Servers"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
+        public string PreferredLanguage {
+            get {
+                return ((string)(this["PreferredLanguage"]));
+            }
+            set {
+                this["PreferredLanguage"] = value;
+            }
+        }
     }
 }
