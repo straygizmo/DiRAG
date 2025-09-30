@@ -1,5 +1,6 @@
 using System.Text;
 using DiRAG.Forms;
+using DiRAG.Exceptions;
 
 namespace DiRAG.Services
 {
@@ -66,18 +67,37 @@ namespace DiRAG.Services
             var topK = Properties.Settings.Default.RAG_TopKChunks;
             var maxContextLength = Properties.Settings.Default.RAG_MaxContextLength;
 
-            // Search for relevant chunks
-            var relevantChunks = await _ragService.SearchRelevantChunksAsync(
-                userInput,
-                checkedFolders,
-                topK,
-                maxContextLength);
+            // Search for relevant chunks with error handling
+            List<Models.SearchResult> relevantChunks = new List<Models.SearchResult>();
+            try
+            {
+                relevantChunks = await _ragService.SearchRelevantChunksAsync(
+                    userInput,
+                    checkedFolders,
+                    topK,
+                    maxContextLength);
+            }
+            catch (VectorizationException vex)
+            {
+                // Return the formatted error message as an AI response
+                return vex.GetFormattedErrorMessage();
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected errors
+                return $"[Error]\n\nAn unexpected error occurred while processing your message with RAG.\n\n" +
+                       $"Error: {ex.Message}\n\n" +
+                       "Suggested actions:\n" +
+                       "• Check your embedding service configuration in Settings\n" +
+                       "• Try disabling RAG by unchecking folders in the Dir to RAG tab\n" +
+                       "• Contact support if the issue persists";
+            }
 
             // Build enhanced message with context
             string messageToSend;
             string? contextAsSystemMessage = null;
 
-            if (_useContextInSystemMessage && relevantChunks != null && relevantChunks.Count > 0)
+            if (_useContextInSystemMessage && relevantChunks.Count > 0)
             {
                 // Build system message with context
                 contextAsSystemMessage = BuildSystemMessageWithContext(relevantChunks);
@@ -89,7 +109,7 @@ namespace DiRAG.Services
             else
             {
                 // Build enhanced message with context included in user message
-                messageToSend = BuildEnhancedMessage(userInput, relevantChunks);
+                messageToSend = BuildEnhancedMessage(userInput, relevantChunks!);
 
                 // Store the context for display
                 _lastContext = ExtractContextFromEnhancedMessage(messageToSend, userInput);

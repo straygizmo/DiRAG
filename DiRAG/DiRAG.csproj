@@ -24,6 +24,9 @@
     <None Update="Scripts\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="wwwroot\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -52,5 +55,20 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
+  <!-- Copy python_tools folder to output directory for Release builds -->
+  <ItemGroup>
+    <PythonTools Include="..\python_tools\**\*.*" />
+  </ItemGroup>
+
+  <Target Name="CopyPythonTools" AfterTargets="Build">
+    <Copy SourceFiles="@(PythonTools)"
+          DestinationFiles="@(PythonTools->'$(OutputPath)python_tools\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          OverwriteReadOnlyFiles="true"
+          Retries="3"
+          RetryDelayMilliseconds="300" />
+    <Message Text="Copied python_tools to output directory" Importance="high" />
+  </Target>
 
 </Project>

@@ -9,15 +9,8 @@ namespace DiRAG.Services
 
         public PythonInteropService()
         {
-            var solutionDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", ".."));
-            var pythonToolsDir = Path.Combine(solutionDir, "python_tools");
-            _pythonExecutable = Path.Combine(pythonToolsDir, ".venv", "Scripts", "python.exe");
-            _scriptPath = Path.Combine(pythonToolsDir, "convert_to_markdown.py");
-
-            if (!File.Exists(_scriptPath))
-            {
-                throw new FileNotFoundException($"Python script not found at: {_scriptPath}");
-            }
+            _pythonExecutable = PythonPathHelper.PythonExecutable;
+            _scriptPath = PythonPathHelper.GetScriptPath("convert_to_markdown.py");
         }
 
         public async Task<string> ConvertToMarkdownAsync(string inputFilePath)

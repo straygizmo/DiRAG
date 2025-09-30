@@ -1,7 +1,9 @@
 @using DiRAG.Services
 @using DiRAG.Forms
+@using Microsoft.JSInterop
 @inject IChatService ChatService
 @inject MainForm MainForm
+@inject IJSRuntime JSRuntime
 @implements IDisposable
 
 <div class="container-fluid d-flex flex-column vh-100 p-3">
@@ -17,13 +19,13 @@
             </div>
         </div>
     </div>
-    <div class="border rounded p-3 mb-3 flex-grow-1" style="overflow-y: auto; font-size: @(fontSize)px;">
+    <div id="chatContainer" class="border rounded p-3 mb-3 flex-grow-1" style="overflow-y: auto; font-size: @(fontSize)px;">
         @foreach (var message in chatHistory)
         {
             <div class="@(message.IsUser ? "text-end" : "text-start") mb-2">
-                <span class="badge @(message.IsUser ? "bg-primary" : "bg-secondary") p-2 text-wrap chat-message"
-                      style="max-width: 80%; display: inline-block; text-align: left;">
-                    @if (message.IsUser)
+                <span class="badge @GetMessageCssClass(message) p-2 text-wrap chat-message"
+                      style="max-width: 80%; display: inline-block; text-align: left; @GetMessageStyle(message)">
+                    @if (message.IsUser && message.Type == MessageType.Normal)
                     {
                         @message.Text
                     }
@@ -121,17 +123,53 @@
 
         isWaitingForResponse = true;
         StateHasChanged();
+        await ScrollToBottomAsync();
 
-        var response = await ChatService.SendMessageAsync(userMessage);
-
-        // Get the last context used if ChatService is RagEnabledChatService
-        if (ChatService is DiRAG.Services.RagEnabledChatService)
+        try
         {
-            lastContext = DiRAG.Services.RagEnabledChatService.LastContext;
+            var response = await ChatService.SendMessageAsync(userMessage);
+
+            // Get the last context used if ChatService is RagEnabledChatService
+            if (ChatService is DiRAG.Services.RagEnabledChatService)
+            {
+                lastContext = DiRAG.Services.RagEnabledChatService.LastContext;
+            }
+
+            isWaitingForResponse = false;
+
+            // Determine message type based on response content
+            var messageType = MessageType.Normal;
+            if (response.StartsWith("[Vectorization Error") || response.StartsWith("[Error]"))
+            {
+                messageType = MessageType.Error;
+            }
+
+            chatHistory.Add(new ChatMessage { Text = response, IsUser = false, Type = messageType });
+        }
+        catch (Exception ex)
+        {
+            isWaitingForResponse = false;
+
+            // Create error message with exception details
+            var errorMessage = $"[Error]\n\nFailed to send message to the chat service.\n\n" +
+                             $"Error Type: {ex.GetType().Name}\n" +
+                             $"Error Message: {ex.Message}\n\n" +
+                             "Suggested actions:\n" +
+                             "• Check your API configuration in Settings\n" +
+                             "• Verify your internet connection\n" +
+                             "• Check if the service is available\n" +
+                             "• Review the error details above";
+
+            // Add error message to chat history
+            chatHistory.Add(new ChatMessage {
+                Text = errorMessage,
+                IsUser = true,
+                Type = MessageType.Error
+            });
         }
 
-        isWaitingForResponse = false;
-        chatHistory.Add(new ChatMessage { Text = response, IsUser = false });
+        StateHasChanged();
+        await ScrollToBottomAsync();
     }
 
     public void Dispose()
@@ -139,23 +177,53 @@
         timer?.Dispose();
     }
 
+    private enum MessageType
+    {
+        Normal,
+        Error,
+        Info
+    }
+
     private class ChatMessage
     {
         public string Text { get; set; } = string.Empty;
         public bool IsUser { get; set; }
+        public MessageType Type { get; set; } = MessageType.Normal;
     }
 
-    private void ShowContextDialog()
+    private string GetMessageCssClass(ChatMessage message)
+    {
+        if (message.Type == MessageType.Error)
+            return "border border-danger bg-danger-subtle text-danger";
+        if (message.Type == MessageType.Info)
+            return message.IsUser ? "border border-info bg-info-subtle text-dark" : "border border-info bg-info-subtle text-dark";
+
+        return message.IsUser ? "bg-primary" : "bg-secondary";
+    }
+
+    private string GetMessageStyle(ChatMessage message)
+    {
+        if (message.Type == MessageType.Error)
+            return "border-width: 2px !important;";
+        if (message.Type == MessageType.Info)
+            return "border-width: 1px !important;";
+        return "";
+    }
+
+    private async Task ScrollToBottomAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("chatFunctions.scrollToBottom", "chatContainer");
+    }
+
+    private async void ShowContextDialog()
     {
         if (!string.IsNullOrEmpty(lastContext))
         {
-            // Show context in a JavaScript alert for now
-            // In production, you might want to use a proper modal dialog
-            Microsoft.JSInterop.JSRuntime? jsRuntime = null;
             // For now, just add the context to chat history as a system message
             chatHistory.Add(new ChatMessage {
                 Text = "[Last Context Used]\n" + lastContext,
-                IsUser = false
+                IsUser = true,
+                Type = MessageType.Info
             });
             StateHasChanged();
         }
@@ -163,13 +231,15 @@
         {
             chatHistory.Add(new ChatMessage {
                 Text = "No context has been used yet. Select folders in the Dir to RAG tab to enable RAG.",
-                IsUser = false
+                IsUser = true,
+                Type = MessageType.Info
             });
             StateHasChanged();
         }
+        await ScrollToBottomAsync();
     }
 
-    private void ShowSelectedDirectories()
+    private async void ShowSelectedDirectories()
     {
         var folders = MainForm.GetCheckedFolders();
 
@@ -178,16 +248,19 @@
             var foldersList = string.Join("\n", folders.Select((f, i) => $"{i + 1}. {f}"));
             chatHistory.Add(new ChatMessage {
                 Text = $"[Selected Directories]\n{foldersList}",
-                IsUser = false
+                IsUser = true,
+                Type = MessageType.Info
             });
         }
         else
         {
             chatHistory.Add(new ChatMessage {
                 Text = "[Selected Directories]\nNo directories are currently selected. Please check directories in the 'Dir to RAG' tab to enable RAG functionality.",
-                IsUser = false
+                IsUser = true,
+                Type = MessageType.Info
             });
         }
         StateHasChanged();
+        await ScrollToBottomAsync();
     }
 }

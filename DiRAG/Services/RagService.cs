@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Diagnostics;
 using DiRAG.Models;
+using DiRAG.Exceptions;
 
 namespace DiRAG.Services
 {
@@ -57,16 +58,11 @@ namespace DiRAG.Services
                 _embeddingClient = openAIClient.GetEmbeddingClient(embeddingModel);
             }
 
-            // Initialize Python tools path
-            var solutionDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", ".."));
-            var pythonToolsDir = Path.Combine(solutionDir, "python_tools");
-            _pythonExecutable = Path.Combine(pythonToolsDir, ".venv", "Scripts", "python.exe");
-            _ragIndexerScript = Path.Combine(pythonToolsDir, "rag_indexer.py");
+            // Initialize Python tools path using PythonPathHelper
+            _pythonExecutable = PythonPathHelper.PythonExecutable;
+            _ragIndexerScript = PythonPathHelper.GetScriptPath("rag_indexer.py");
 
-            if (!_useNativeEmbedding && !File.Exists(_ragIndexerScript))
-            {
-                throw new FileNotFoundException($"Python RAG indexer script not found at: {_ragIndexerScript}");
-            }
+            // PythonPathHelper.GetScriptPath already validates file existence
         }
 
         public async Task ProcessFoldersAsync(List<string> folderPaths, IProgress<string> progress)
@@ -183,7 +179,7 @@ namespace DiRAG.Services
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    WorkingDirectory = Path.GetDirectoryName(_ragIndexerScript)
+                    WorkingDirectory = PythonPathHelper.PythonToolsDirectory
                 };
 
                 using var process = new Process { StartInfo = processStartInfo };
@@ -348,6 +344,8 @@ namespace DiRAG.Services
         public async Task<List<SearchResult>> SearchRelevantChunksAsync(string query, List<string> folderPaths, int topK, int maxContextLength)
         {
             var allResults = new List<SearchResult>();
+
+            // Generate embedding for the query - this will throw VectorizationException if it fails
             var queryEmbedding = await GenerateEmbeddingAsync(query);
 
             foreach (var folderPath in folderPaths)
@@ -462,16 +460,19 @@ namespace DiRAG.Services
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error generating embedding: {ex.Message}");
-                    return Array.Empty<float>();
+                    throw new VectorizationException(
+                        $"Failed to generate embedding: {ex.Message}",
+                        ex);
                 }
             }
             else
             {
-                // Use Python for embedding generation
-                // This would require implementing a Python interop for single embedding generation
-                // For now, return empty array as fallback
-                Console.WriteLine("Python embedding generation for single text not yet implemented");
-                return Array.Empty<float>();
+                // Python embedding generation not yet implemented
+                throw new VectorizationException(
+                    "Python embedding generation is not yet implemented for query vectorization",
+                    "Configuration Error",
+                    "• Enable native embedding in Settings > Embedding Settings\n" +
+                    "• Or wait for Python embedding support to be implemented");
             }
         }
 
