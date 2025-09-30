@@ -77,6 +77,17 @@
     private List<string> checkedFolders = new List<string>();
     private DiRAG.Pages.Components.ConfirmDialog confirmDialog = null!;
     private bool clearChatPending = false;
+    private bool shouldScrollToBottom = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldScrollToBottom)
+        {
+            shouldScrollToBottom = false;
+            await ScrollToBottomAsync();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     protected override void OnInitialized()
     {
@@ -116,6 +127,9 @@
                 Type = MessageType.Info
             });
         }
+
+        // Set flag to scroll after initial render
+        shouldScrollToBottom = true;
 
         // Subscribe to culture change events
         if (Localization != null)
@@ -172,8 +186,8 @@
                                 Type = MessageType.Info
                             });
                         }
+                        shouldScrollToBottom = true;
                         StateHasChanged();
-                        await ScrollToBottomAsync();
                     });
                 }
                 else
@@ -195,8 +209,8 @@
         chatHistory.Add(new ChatMessage { Text = userMessage, IsUser = true });
 
         isWaitingForResponse = true;
+        shouldScrollToBottom = true;
         StateHasChanged();
-        await ScrollToBottomAsync();
 
         try
         {
@@ -244,8 +258,8 @@
             });
         }
 
+        shouldScrollToBottom = true;
         StateHasChanged();
-        await ScrollToBottomAsync();
     }
 
     public void Dispose()
@@ -324,7 +338,8 @@
             });
             StateHasChanged();
         }
-        await ScrollToBottomAsync();
+        shouldScrollToBottom = true;
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void ShowSelectedDirectories()
@@ -348,8 +363,8 @@
                 Type = MessageType.Info
             });
         }
+        shouldScrollToBottom = true;
         StateHasChanged();
-        await ScrollToBottomAsync();
     }
 
     private async Task ClearChat()
