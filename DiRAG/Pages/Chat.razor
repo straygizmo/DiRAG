@@ -106,7 +106,39 @@
                 apiProvider = newApiProvider;
                 modelName = newModelName;
                 checkedFolders = newCheckedFolders;
-                await InvokeAsync(StateHasChanged);
+
+                // Auto-display selected directories when folders change
+                if (foldersChanged)
+                {
+                    await InvokeAsync(async () =>
+                    {
+                        if (newCheckedFolders.Count > 0)
+                        {
+                            var foldersList = string.Join("\n", newCheckedFolders.Select((f, i) => $"{i + 1}. {f}"));
+                            chatHistory.Add(new ChatMessage
+                            {
+                                Text = $"[Selected Directories]\n{foldersList}",
+                                IsUser = true,
+                                Type = MessageType.Info
+                            });
+                        }
+                        else
+                        {
+                            chatHistory.Add(new ChatMessage
+                            {
+                                Text = "[Selected Directories]\nNo directories are currently selected. Please check directories in the 'Dir to RAG' tab to enable RAG functionality.",
+                                IsUser = true,
+                                Type = MessageType.Info
+                            });
+                        }
+                        StateHasChanged();
+                        await ScrollToBottomAsync();
+                    });
+                }
+                else
+                {
+                    await InvokeAsync(StateHasChanged);
+                }
             }
         }, null, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100));
     }
