@@ -40,8 +40,8 @@ namespace DiRAG.Services
             _chunkSize = Math.Min(chunkSize, contextLength);
             _chunkOverlap = Math.Min(chunkOverlap, _chunkSize);
 
-            // Initialize C# embedding client if native embedding is enabled
-            if (_useNativeEmbedding)
+            // Initialize OpenAI-compatible embedding client if native embedding is NOT enabled
+            if (!_useNativeEmbedding)
             {
                 OpenAIClient openAIClient;
                 if (string.IsNullOrEmpty(embeddingUrl) || embeddingUrl == "https://api.openai.com/v1")
@@ -311,22 +311,131 @@ namespace DiRAG.Services
 
         private async Task EmbedChunksAsync(List<ChunkData> chunks)
         {
-            if (_embeddingClient == null)
+            if (_useNativeEmbedding)
             {
-                throw new InvalidOperationException("Embedding client is not initialized. Native embedding is not enabled.");
+                // Use native embeddinggemma_loader for batch processing
+                await EmbedChunksNativeAsync(chunks);
             }
-
-            foreach (var chunk in chunks)
+            else
             {
-                try
+                // Use OpenAI-compatible API
+                if (_embeddingClient == null)
                 {
-                    var embedding = await _embeddingClient.GenerateEmbeddingAsync(chunk.ChunkText);
-                    chunk.Embedding = embedding.Value.ToFloats().ToArray();
+                    throw new InvalidOperationException("Embedding client is not initialized.");
                 }
-                catch (Exception ex)
+
+                foreach (var chunk in chunks)
+                {
+                    try
+                    {
+                        var embedding = await _embeddingClient.GenerateEmbeddingAsync(chunk.ChunkText);
+                        chunk.Embedding = embedding.Value.ToFloats().ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        chunk.Embedding = Array.Empty<float>();
+                        Console.WriteLine($"Embedding error for chunk {chunk.ChunkIndex}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        private async Task EmbedChunksNativeAsync(List<ChunkData> chunks)
+        {
+            var tempConfigFile = Path.Combine(Path.GetTempPath(), $"native_embedding_batch_{Guid.NewGuid()}.json");
+
+            try
+            {
+                var config = new
+                {
+                    texts = chunks.Select(c => c.ChunkText).ToList()
+                };
+
+                var configJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(tempConfigFile, configJson);
+
+                var nativeEmbeddingScript = PythonPathHelper.GetScriptPath("native_embedding_server.py");
+
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = _pythonExecutable,
+                    Arguments = $"\"{nativeEmbeddingScript}\" \"{tempConfigFile}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = PythonPathHelper.PythonToolsDirectory
+                };
+
+                using var process = new Process { StartInfo = processStartInfo };
+                process.Start();
+
+                var output = await process.StandardOutput.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync();
+
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception($"Native embedding failed: {error}");
+                }
+
+                // Parse JSON result
+                var lastLine = output.Trim().Split('\n').LastOrDefault() ?? "";
+                var result = JsonSerializer.Deserialize<Dictionary<string, object>>(lastLine);
+
+                if (result != null && result.ContainsKey("success") && result["success"].ToString() == "True")
+                {
+                    if (result.ContainsKey("results"))
+                    {
+                        var resultsElement = (JsonElement)result["results"];
+                        var resultList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resultsElement.GetRawText());
+
+                        if (resultList != null && resultList.Count == chunks.Count)
+                        {
+                            for (int i = 0; i < chunks.Count; i++)
+                            {
+                                var itemResult = resultList[i];
+                                if (itemResult.ContainsKey("success") && itemResult["success"].ToString() == "True"
+                                    && itemResult.ContainsKey("embedding"))
+                                {
+                                    var embeddingElement = (JsonElement)itemResult["embedding"];
+                                    chunks[i].Embedding = JsonSerializer.Deserialize<float[]>(embeddingElement.GetRawText()) ?? Array.Empty<float>();
+                                }
+                                else
+                                {
+                                    chunks[i].Embedding = Array.Empty<float>();
+                                    Console.WriteLine($"Embedding error for chunk {chunks[i].ChunkIndex}");
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Native embedding returned error: {output}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Native embedding batch error: {ex.Message}");
+                // Set all chunks to empty embeddings on error
+                foreach (var chunk in chunks)
                 {
                     chunk.Embedding = Array.Empty<float>();
-                    Console.WriteLine($"Embedding error for chunk {chunk.ChunkIndex}: {ex.Message}");
+                }
+            }
+            finally
+            {
+                if (File.Exists(tempConfigFile))
+                {
+                    try
+                    {
+                        File.Delete(tempConfigFile);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
         }
@@ -450,8 +559,23 @@ namespace DiRAG.Services
 
         public async Task<float[]> GenerateEmbeddingAsync(string text)
         {
-            if (_useNativeEmbedding && _embeddingClient != null)
+            if (_useNativeEmbedding)
             {
+                // Use native embeddinggemma_loader (Python GGUF implementation)
+                return await GenerateEmbeddingNativeAsync(text);
+            }
+            else
+            {
+                // Use OpenAI-compatible API
+                if (_embeddingClient == null)
+                {
+                    throw new VectorizationException(
+                        "Embedding client is not initialized",
+                        "Initialization Error",
+                        "• Check your API credentials and configuration\n" +
+                        "• Ensure the embedding service is properly configured in Settings");
+                }
+
                 try
                 {
                     var embedding = await _embeddingClient.GenerateEmbeddingAsync(text);
@@ -465,24 +589,108 @@ namespace DiRAG.Services
                         ex);
                 }
             }
-            else
+        }
+
+        private async Task<float[]> GenerateEmbeddingNativeAsync(string text)
+        {
+            var tempConfigFile = Path.Combine(Path.GetTempPath(), $"native_embedding_{Guid.NewGuid()}.json");
+
+            try
             {
-                if (_embeddingClient == null)
+                var config = new
                 {
+                    text = text
+                };
+
+                var configJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(tempConfigFile, configJson);
+
+                var nativeEmbeddingScript = PythonPathHelper.GetScriptPath("native_embedding_server.py");
+
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = _pythonExecutable,
+                    Arguments = $"\"{nativeEmbeddingScript}\" \"{tempConfigFile}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = PythonPathHelper.PythonToolsDirectory
+                };
+
+                using var process = new Process { StartInfo = processStartInfo };
+                process.Start();
+
+                var output = await process.StandardOutput.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync();
+
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode != 0)
+                {
+                    var detailedError = $"Exit code: {process.ExitCode}\n" +
+                                      $"Standard Output:\n{output}\n" +
+                                      $"Standard Error:\n{error}\n" +
+                                      $"Script: {nativeEmbeddingScript}\n" +
+                                      $"Config: {tempConfigFile}\n" +
+                                      $"Python: {_pythonExecutable}";
+
                     throw new VectorizationException(
-                        "Embedding client is not initialized",
-                        "Initialization Error",
-                        "• Check your API credentials and configuration\n" +
-                        "• Ensure the embedding service is properly configured in Settings");
+                        $"Native embedding failed with exit code {process.ExitCode}",
+                        "Native Embedding Error",
+                        detailedError);
                 }
-                else
+
+                // Parse JSON result
+                var lastLine = output.Trim().Split('\n').LastOrDefault() ?? "";
+                var result = JsonSerializer.Deserialize<Dictionary<string, object>>(lastLine);
+
+                if (result != null && result.ContainsKey("success"))
                 {
-                    // Python embedding generation not yet implemented
-                    throw new VectorizationException(
-                        "Python embedding generation is not yet implemented for query vectorization",
-                        "Configuration Error",
-                        "• Enable native embedding in Settings > Embedding Settings\n" +
-                        "• Or wait for Python embedding support to be implemented");
+                    var success = result["success"].ToString() == "True";
+
+                    if (success && result.ContainsKey("embedding"))
+                    {
+                        var embeddingElement = (JsonElement)result["embedding"];
+                        return JsonSerializer.Deserialize<float[]>(embeddingElement.GetRawText()) ?? Array.Empty<float>();
+                    }
+                    else if (result.ContainsKey("error"))
+                    {
+                        var errorMsg = result["error"].ToString();
+                        throw new VectorizationException(
+                            "Native embedding generation failed",
+                            "Native Embedding Error",
+                            errorMsg ?? "Unknown error");
+                    }
+                }
+
+                throw new VectorizationException(
+                    "Invalid response from native embedding server",
+                    "Native Embedding Error",
+                    $"Output: {output}");
+            }
+            catch (VectorizationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new VectorizationException(
+                    $"Failed to generate native embedding: {ex.Message}",
+                    "Native Embedding Error",
+                    ex.StackTrace ?? "");
+            }
+            finally
+            {
+                if (File.Exists(tempConfigFile))
+                {
+                    try
+                    {
+                        File.Delete(tempConfigFile);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
         }

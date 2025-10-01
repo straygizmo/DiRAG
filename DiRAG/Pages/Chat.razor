@@ -216,11 +216,8 @@
         {
             var response = await ChatService.SendMessageAsync(userMessage);
 
-            // Get the last context used if ChatService is RagEnabledChatService
-            if (ChatService is DiRAG.Services.RagEnabledChatService)
-            {
-                lastContext = DiRAG.Services.RagEnabledChatService.LastContext;
-            }
+            // Get the last context used (always check, as it's a static property)
+            lastContext = DiRAG.Services.RagEnabledChatService.LastContext;
 
             isWaitingForResponse = false;
 

@@ -6,6 +6,7 @@ DiRAG is a Windows desktop application that provides an AI chat interface enhanc
 
 - **Multi-Provider Support**: Works with OpenAI-compatible APIs, Claude Code CLI, and custom providers
 - **RAG Integration**: Automatically processes and indexes documents from selected folders to provide contextual information
+- **Native Embedding Support**: Includes local embedding model support (Gemma) for offline RAG functionality without external API dependencies
 - **Blazor WebView UI**: Modern web-based chat interface within a Windows Forms application
 - **Document Processing**: Converts various document formats to markdown for better context understanding
 - **Configurable Settings**: Customize API endpoints, models, embedding settings, and more
@@ -14,7 +15,7 @@ DiRAG is a Windows desktop application that provides an AI chat interface enhanc
 ## Prerequisites
 
 - Windows 10 or later
-- .NET 9.0 Runtime or SDK
+- .NET 9.0 SDK
 - Visual Studio 2022 (for building from source)
 - Python 3.x
 - uv
@@ -34,11 +35,33 @@ cd DiRAG
 dotnet build .\DiRAG.sln
 ```
 
-3. Run the application (F5 or Debug → Start Debugging in Visual Studio, or run the executable from the build output)
+3. Output will be in `DiRAG\bin\Debug\net9.0-windows\`
 
-## Configuration
+## Python Tools Setup (Required)
 
-On first launch, DiRAG will prompt you to configure your API settings. You can also access settings anytime through the application menu.
+Python tools are **required** for document processing, chunking, and embedding functionality. DiRAG uses Python for:
+- Document conversion (MarkItDown)
+- Text chunking and processing
+- Embedding generation
+
+### Setup Instructions
+
+1. Navigate to the python_tools directory:
+```bash
+cd python_tools
+```
+
+2. Install dependencies using uv:
+```bash
+uv sync
+```
+
+This will install all necessary Python dependencies including:
+- MarkItDown for document conversion (PDF, DOCX, etc.)
+- Libraries for text chunking
+- Embedding generation utilities
+
+**Note**: Without proper Python tools setup, RAG functionality will not work correctly.
 
 ### API Provider Configuration
 
@@ -47,7 +70,7 @@ DiRAG supports multiple API providers:
 #### OpenAI-Compatible APIs
 - **Base URL**: Your API endpoint (e.g., `http://localhost:1234` for LM Studio)
 - **API Key**: Your authentication key
-- **Model**: The model to use (e.g., `gpt-4o`)
+- **Model**: The model to use (e.g., `gemma3`)
 
 #### Claude Code CLI
 - **CLI Path**: Path to Claude Code executable
@@ -96,44 +119,6 @@ DiRAG/
 └── DiRAG.sln                  # Visual Studio solution file
 ```
 
-## Building from Source
-
-### Requirements
-- Visual Studio 2022 with .NET desktop development workload
-- .NET 9.0 SDK
-
-### Build Steps
-1. Clone the repository
-2. Open `DiRAG.sln` in Visual Studio
-3. Restore NuGet packages
-4. Build the solution (Release configuration for production)
-5. Output will be in `DiRAG\bin\Release\net9.0-windows\`
-
-## Python Tools Setup (Required)
-
-Python tools are **required** for document processing, chunking, and embedding functionality. DiRAG uses Python for:
-- Document conversion (MarkItDown)
-- Text chunking and processing
-- Embedding generation
-
-### Setup Instructions
-
-1. Navigate to the python_tools directory:
-```bash
-cd python_tools
-```
-
-2. Install dependencies using uv:
-```bash
-uv sync
-```
-
-This will install all necessary Python dependencies including:
-- MarkItDown for document conversion (PDF, DOCX, etc.)
-- Libraries for text chunking
-- Embedding generation utilities
-
-**Note**: Without proper Python tools setup, RAG functionality will not work correctly.
 
 ## Contributing
 
@@ -148,14 +133,54 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 3. **Embedding Errors**: Verify embedding API credentials and endpoint configuration
 
 ### Supported File Formats
-- Text files (.txt, .md, .csv)
-- Code files (.cs, .js, .py, .json, etc.)
-- Documents (.pdf, .docx with python_tools installed)
-- Web files (.html, .xml)
+
+**Text Files:**
+- .txt, .md, .csv
+
+**Code Files:**
+- .py, .js, .ts, .jsx, .tsx
+- .c, .cpp, .h, .java, .cs
+- .go, .rs, .rb, .php
+- .swift, .kt, .scala
+
+**Configuration Files:**
+- .json, .yaml, .yml
+- .toml, .ini, .cfg
+
+**Script Files:**
+- .sh, .bat, .ps1, .sql
+
+**Web Files:**
+- .html, .css, .xml
+
+**Office Documents** (requires python_tools):
+- .pdf
+- .docx, .doc
+- .xlsx, .xls
+- .pptx, .ppt
 
 ## License
 
 MIT
+
+## Third-Party Model Licenses
+
+### Gemma Embedding Models
+
+If you choose to use Gemma embedding models (e.g., text-embedding-embeddinggemma-300m) with this application, please note:
+
+- Gemma models are provided by Google and are subject to their own [Terms of Use](https://ai.google.dev/gemma/terms)
+- When distributing this software with Gemma models included, you must:
+  - Provide notice to recipients that Gemma is subject to use restrictions
+  - Include a copy of or link to the Gemma Terms of Use
+  - Ensure compliance with the Prohibited Use Policy
+  - Include prominent notices if model files are modified
+- Commercial use is permitted but must comply with all terms and restrictions
+- Models are provided "AS IS" without warranty
+
+**Important**: Users are solely responsible for ensuring their use of Gemma models complies with Google's terms and applicable laws.
+
+For full details, see: https://ai.google.dev/gemma/terms
 
 ## Acknowledgments
 

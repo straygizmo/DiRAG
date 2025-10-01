@@ -228,7 +228,7 @@ namespace DiRAG.Forms
 
                 if (useNativeEmbedding)
                 {
-                    // Use C# native implementation
+                    // Use native embeddinggemma_loader (Python GGUF implementation)
                     var ragService = new RagService(
                         embeddingUrl,
                         apiKey,
@@ -243,9 +243,8 @@ namespace DiRAG.Forms
                     var embedding = await ragService.GenerateEmbeddingAsync(testText);
 
                     message = $"✓ Connection Successful!\n\n" +
-                             $"Method: C# Native\n" +
-                             $"Embedding Model: {embeddingModel}\n" +
-                             $"Embedding URL: {embeddingUrl}\n" +
+                             $"Method: Native GGUF (embeddinggemma_loader)\n" +
+                             $"Embedding Model: Local GGUF\n" +
                              $"Embedding Dimension: {embedding.Length}\n" +
                              $"Sample values: [{string.Join(", ", embedding.Take(5).Select(f => f.ToString("F4")))}...]";
                 }

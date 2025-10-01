@@ -118,7 +118,7 @@
             blazorWebView1.Dock = DockStyle.Fill;
             blazorWebView1.Location = new Point(0, 0);
             blazorWebView1.Name = "blazorWebView1";
-            blazorWebView1.Size = new Size(830, 561);
+            blazorWebView1.Size = new Size(839, 525);
             blazorWebView1.TabIndex = 0;
             blazorWebView1.Text = "blazorWebView1";
             // 
@@ -131,7 +131,7 @@
             tabMain.Margin = new Padding(3, 2, 3, 2);
             tabMain.Name = "tabMain";
             tabMain.SelectedIndex = 0;
-            tabMain.Size = new Size(349, 561);
+            tabMain.Size = new Size(352, 525);
             tabMain.TabIndex = 2;
             // 
             // tabPageDir
@@ -143,7 +143,7 @@
             tabPageDir.Margin = new Padding(3, 2, 3, 2);
             tabPageDir.Name = "tabPageDir";
             tabPageDir.Padding = new Padding(3, 2, 3, 2);
-            tabPageDir.Size = new Size(341, 533);
+            tabPageDir.Size = new Size(344, 497);
             tabPageDir.TabIndex = 0;
             tabPageDir.Text = "📁Dir to RAG";
             tabPageDir.UseVisualStyleBackColor = true;
@@ -156,7 +156,7 @@
             ktvFolderTree.Margin = new Padding(3, 2, 3, 2);
             ktvFolderTree.MultiSelect = true;
             ktvFolderTree.Name = "ktvFolderTree";
-            ktvFolderTree.Size = new Size(335, 502);
+            ktvFolderTree.Size = new Size(338, 466);
             ktvFolderTree.TabIndex = 0;
             // 
             // kToolStripDirTree
@@ -165,7 +165,7 @@
             kToolStripDirTree.Items.AddRange(new ToolStripItem[] { tsbIndexing, tspRefresh });
             kToolStripDirTree.Location = new Point(3, 2);
             kToolStripDirTree.Name = "kToolStripDirTree";
-            kToolStripDirTree.Size = new Size(335, 25);
+            kToolStripDirTree.Size = new Size(338, 25);
             kToolStripDirTree.TabIndex = 3;
             kToolStripDirTree.Text = "Refresh the tree";
             // 
@@ -192,10 +192,10 @@
             // lblRagStatus
             // 
             lblRagStatus.Dock = DockStyle.Bottom;
-            lblRagStatus.Location = new Point(3, 529);
+            lblRagStatus.Location = new Point(3, 493);
             lblRagStatus.Margin = new Padding(3, 2, 3, 2);
             lblRagStatus.Name = "lblRagStatus";
-            lblRagStatus.Size = new Size(335, 2);
+            lblRagStatus.Size = new Size(338, 2);
             lblRagStatus.TabIndex = 2;
             lblRagStatus.Values.Text = "";
             // 
@@ -207,7 +207,7 @@
             tabPageSettings.Margin = new Padding(3, 2, 3, 2);
             tabPageSettings.Name = "tabPageSettings";
             tabPageSettings.Padding = new Padding(9, 8, 9, 8);
-            tabPageSettings.Size = new Size(341, 533);
+            tabPageSettings.Size = new Size(344, 497);
             tabPageSettings.TabIndex = 2;
             tabPageSettings.Text = "⚙️Settings";
             tabPageSettings.UseVisualStyleBackColor = true;
@@ -223,7 +223,7 @@
             tabSettings.Margin = new Padding(3, 2, 3, 2);
             tabSettings.Name = "tabSettings";
             tabSettings.SelectedIndex = 0;
-            tabSettings.Size = new Size(323, 517);
+            tabSettings.Size = new Size(326, 481);
             tabSettings.TabIndex = 15;
             // 
             // tabPageChat
@@ -234,7 +234,7 @@
             tabPageChat.Margin = new Padding(3, 2, 3, 2);
             tabPageChat.Name = "tabPageChat";
             tabPageChat.Padding = new Padding(3, 2, 3, 2);
-            tabPageChat.Size = new Size(315, 489);
+            tabPageChat.Size = new Size(318, 453);
             tabPageChat.TabIndex = 0;
             tabPageChat.Text = "Chat Settings";
             tabPageChat.UseVisualStyleBackColor = true;
@@ -249,7 +249,7 @@
             kryptonPanel2.Location = new Point(3, 2);
             kryptonPanel2.Margin = new Padding(3, 2, 3, 2);
             kryptonPanel2.Name = "kryptonPanel2";
-            kryptonPanel2.Size = new Size(309, 455);
+            kryptonPanel2.Size = new Size(312, 419);
             kryptonPanel2.TabIndex = 0;
             // 
             // openAISettingsControl
@@ -257,7 +257,7 @@
             openAISettingsControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             openAISettingsControl.Location = new Point(3, 51);
             openAISettingsControl.Name = "openAISettingsControl";
-            openAISettingsControl.Size = new Size(292, 190);
+            openAISettingsControl.Size = new Size(295, 190);
             openAISettingsControl.TabIndex = 2;
             // 
             // claudeCodeSettingsControl
@@ -265,7 +265,7 @@
             claudeCodeSettingsControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             claudeCodeSettingsControl.Location = new Point(3, 51);
             claudeCodeSettingsControl.Name = "claudeCodeSettingsControl";
-            claudeCodeSettingsControl.Size = new Size(292, 120);
+            claudeCodeSettingsControl.Size = new Size(295, 120);
             claudeCodeSettingsControl.TabIndex = 2;
             claudeCodeSettingsControl.Visible = false;
             // 
@@ -294,10 +294,10 @@
             // btnSaveChatSettings
             // 
             btnSaveChatSettings.Dock = DockStyle.Bottom;
-            btnSaveChatSettings.Location = new Point(3, 457);
+            btnSaveChatSettings.Location = new Point(3, 421);
             btnSaveChatSettings.Margin = new Padding(3, 2, 3, 2);
             btnSaveChatSettings.Name = "btnSaveChatSettings";
-            btnSaveChatSettings.Size = new Size(309, 30);
+            btnSaveChatSettings.Size = new Size(312, 30);
             btnSaveChatSettings.TabIndex = 1;
             btnSaveChatSettings.Values.DropDownArrowColor = Color.Empty;
             btnSaveChatSettings.Values.Text = "Save";
@@ -311,7 +311,7 @@
             tabPageRAG.Margin = new Padding(3, 2, 3, 2);
             tabPageRAG.Name = "tabPageRAG";
             tabPageRAG.Padding = new Padding(3, 2, 3, 2);
-            tabPageRAG.Size = new Size(314, 501);
+            tabPageRAG.Size = new Size(318, 453);
             tabPageRAG.TabIndex = 1;
             tabPageRAG.Text = "RAG Settings";
             tabPageRAG.UseVisualStyleBackColor = true;
@@ -338,7 +338,7 @@
             kryptonPanel3.Location = new Point(3, 2);
             kryptonPanel3.Margin = new Padding(3, 2, 3, 2);
             kryptonPanel3.Name = "kryptonPanel3";
-            kryptonPanel3.Size = new Size(308, 467);
+            kryptonPanel3.Size = new Size(312, 419);
             kryptonPanel3.TabIndex = 0;
             // 
             // txtMaxContextLength
@@ -347,7 +347,7 @@
             txtMaxContextLength.Location = new Point(3, 352);
             txtMaxContextLength.Margin = new Padding(3, 2, 3, 2);
             txtMaxContextLength.Name = "txtMaxContextLength";
-            txtMaxContextLength.Size = new Size(291, 23);
+            txtMaxContextLength.Size = new Size(295, 23);
             txtMaxContextLength.TabIndex = 21;
             txtMaxContextLength.Text = "6000";
             // 
@@ -366,7 +366,7 @@
             txtTopKChunks.Location = new Point(3, 304);
             txtTopKChunks.Margin = new Padding(3, 2, 3, 2);
             txtTopKChunks.Name = "txtTopKChunks";
-            txtTopKChunks.Size = new Size(291, 23);
+            txtTopKChunks.Size = new Size(295, 23);
             txtTopKChunks.TabIndex = 19;
             txtTopKChunks.Text = "3";
             // 
@@ -385,7 +385,7 @@
             txtChunkOverlap.Location = new Point(3, 220);
             txtChunkOverlap.Margin = new Padding(3, 2, 3, 2);
             txtChunkOverlap.Name = "txtChunkOverlap";
-            txtChunkOverlap.Size = new Size(291, 23);
+            txtChunkOverlap.Size = new Size(295, 23);
             txtChunkOverlap.TabIndex = 16;
             txtChunkOverlap.Text = "100";
             // 
@@ -395,7 +395,7 @@
             txtChunkSize.Location = new Point(3, 172);
             txtChunkSize.Margin = new Padding(3, 2, 3, 2);
             txtChunkSize.Name = "txtChunkSize";
-            txtChunkSize.Size = new Size(291, 23);
+            txtChunkSize.Size = new Size(295, 23);
             txtChunkSize.TabIndex = 14;
             txtChunkSize.Text = "500";
             // 
@@ -405,7 +405,7 @@
             txtContextLength.Location = new Point(3, 124);
             txtContextLength.Margin = new Padding(3, 2, 3, 2);
             txtContextLength.Name = "txtContextLength";
-            txtContextLength.Size = new Size(291, 23);
+            txtContextLength.Size = new Size(295, 23);
             txtContextLength.TabIndex = 12;
             txtContextLength.Text = "2048";
             // 
@@ -415,7 +415,7 @@
             txtEmbeddingModel.Location = new Point(3, 75);
             txtEmbeddingModel.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingModel.Name = "txtEmbeddingModel";
-            txtEmbeddingModel.Size = new Size(291, 23);
+            txtEmbeddingModel.Size = new Size(295, 23);
             txtEmbeddingModel.TabIndex = 10;
             txtEmbeddingModel.Text = "text-embedding-embeddinggemma-300m";
             // 
@@ -425,7 +425,7 @@
             txtEmbeddingUrl.Location = new Point(3, 28);
             txtEmbeddingUrl.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingUrl.Name = "txtEmbeddingUrl";
-            txtEmbeddingUrl.Size = new Size(291, 23);
+            txtEmbeddingUrl.Size = new Size(295, 23);
             txtEmbeddingUrl.TabIndex = 8;
             txtEmbeddingUrl.Text = "http://localhost:/1234";
             // 
@@ -479,10 +479,10 @@
             chkUseNativeEmbedding.Location = new Point(3, 250);
             chkUseNativeEmbedding.Margin = new Padding(3, 2, 3, 2);
             chkUseNativeEmbedding.Name = "chkUseNativeEmbedding";
-            chkUseNativeEmbedding.Size = new Size(166, 20);
+            chkUseNativeEmbedding.Size = new Size(148, 20);
             chkUseNativeEmbedding.TabIndex = 17;
-            chkUseNativeEmbedding.Values.Text = "Use Native C# Embedding";
-            chkUseNativeEmbedding.Visible = false;
+            chkUseNativeEmbedding.Values.Text = "Use Native Embedding";
+            chkUseNativeEmbedding.Visible = true;
             // 
             // btnTestEmbedding
             // 
@@ -490,7 +490,7 @@
             btnTestEmbedding.Location = new Point(3, 380);
             btnTestEmbedding.Margin = new Padding(3, 2, 3, 2);
             btnTestEmbedding.Name = "btnTestEmbedding";
-            btnTestEmbedding.Size = new Size(291, 30);
+            btnTestEmbedding.Size = new Size(295, 30);
             btnTestEmbedding.TabIndex = 22;
             btnTestEmbedding.Values.DropDownArrowColor = Color.Empty;
             btnTestEmbedding.Values.Text = "Test Embedding";
@@ -499,10 +499,10 @@
             // btnSaveRAGSettings
             // 
             btnSaveRAGSettings.Dock = DockStyle.Bottom;
-            btnSaveRAGSettings.Location = new Point(3, 469);
+            btnSaveRAGSettings.Location = new Point(3, 421);
             btnSaveRAGSettings.Margin = new Padding(3, 2, 3, 2);
             btnSaveRAGSettings.Name = "btnSaveRAGSettings";
-            btnSaveRAGSettings.Size = new Size(308, 30);
+            btnSaveRAGSettings.Size = new Size(312, 30);
             btnSaveRAGSettings.TabIndex = 2;
             btnSaveRAGSettings.Values.DropDownArrowColor = Color.Empty;
             btnSaveRAGSettings.Values.Text = "Save";
@@ -514,7 +514,7 @@
             tabPageTheme.Controls.Add(kryptonPanel4);
             tabPageTheme.Location = new Point(4, 24);
             tabPageTheme.Name = "tabPageTheme";
-            tabPageTheme.Size = new Size(314, 501);
+            tabPageTheme.Size = new Size(317, 465);
             tabPageTheme.TabIndex = 2;
             tabPageTheme.Text = "UI";
             tabPageTheme.UseVisualStyleBackColor = true;
@@ -525,7 +525,7 @@
             kryptonThemeListBox1.Dock = DockStyle.Fill;
             kryptonThemeListBox1.Location = new Point(0, 75);
             kryptonThemeListBox1.Name = "kryptonThemeListBox1";
-            kryptonThemeListBox1.Size = new Size(314, 426);
+            kryptonThemeListBox1.Size = new Size(317, 390);
             kryptonThemeListBox1.TabIndex = 0;
             kryptonThemeListBox1.SelectedIndexChanged += KryptonThemeListBox1_SelectedIndexChanged;
             // 
@@ -537,7 +537,7 @@
             kryptonPanel4.Dock = DockStyle.Top;
             kryptonPanel4.Location = new Point(0, 0);
             kryptonPanel4.Name = "kryptonPanel4";
-            kryptonPanel4.Size = new Size(314, 75);
+            kryptonPanel4.Size = new Size(317, 75);
             kryptonPanel4.TabIndex = 1;
             // 
             // kryptonLabel1
@@ -566,7 +566,7 @@
             cmbLanguage.Location = new Point(4, 29);
             cmbLanguage.Margin = new Padding(3, 2, 3, 2);
             cmbLanguage.Name = "cmbLanguage";
-            cmbLanguage.Size = new Size(291, 22);
+            cmbLanguage.Size = new Size(294, 22);
             cmbLanguage.TabIndex = 16;
             cmbLanguage.SelectedIndexChanged += cmbLanguage_SelectedIndexChanged;
             // 
@@ -575,7 +575,7 @@
             tabPageMCP.Controls.Add(kryptonPanel1);
             tabPageMCP.Location = new Point(4, 24);
             tabPageMCP.Name = "tabPageMCP";
-            tabPageMCP.Size = new Size(314, 501);
+            tabPageMCP.Size = new Size(317, 465);
             tabPageMCP.TabIndex = 3;
             tabPageMCP.Text = "MCP";
             tabPageMCP.UseVisualStyleBackColor = true;
@@ -592,7 +592,7 @@
             kryptonPanel1.Dock = DockStyle.Fill;
             kryptonPanel1.Location = new Point(0, 0);
             kryptonPanel1.Name = "kryptonPanel1";
-            kryptonPanel1.Size = new Size(314, 501);
+            kryptonPanel1.Size = new Size(317, 465);
             kryptonPanel1.TabIndex = 0;
             kryptonPanel1.Visible = false;
             // 
@@ -665,11 +665,11 @@
             kryptonStatusStrip1.Font = new Font("Segoe UI", 9F);
             kryptonStatusStrip1.ImageScalingSize = new Size(20, 20);
             kryptonStatusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            kryptonStatusStrip1.Location = new Point(0, 561);
+            kryptonStatusStrip1.Location = new Point(0, 525);
             kryptonStatusStrip1.Name = "kryptonStatusStrip1";
             kryptonStatusStrip1.ProgressBars = null;
             kryptonStatusStrip1.RenderMode = ToolStripRenderMode.ManagerRenderMode;
-            kryptonStatusStrip1.Size = new Size(1183, 22);
+            kryptonStatusStrip1.Size = new Size(1195, 22);
             kryptonStatusStrip1.TabIndex = 4;
             kryptonStatusStrip1.Text = "kryptonStatusStrip1";
             // 
@@ -693,15 +693,15 @@
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(blazorWebView1);
-            splitContainerMain.Size = new Size(1183, 561);
-            splitContainerMain.SplitterDistance = 349;
+            splitContainerMain.Size = new Size(1195, 525);
+            splitContainerMain.SplitterDistance = 352;
             splitContainerMain.TabIndex = 5;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1183, 583);
+            ClientSize = new Size(1195, 547);
             Controls.Add(splitContainerMain);
             Controls.Add(kryptonStatusStrip1);
             Icon = (Icon)resources.GetObject("$this.Icon");
