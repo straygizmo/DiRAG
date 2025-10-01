@@ -721,6 +721,8 @@ namespace DiRAG.Forms
         private async void tsbIndexing_Click(object sender, EventArgs e)
         {
             await Indexing();
+            MessageBox.Show("RAG processing completed successfully!", "Success",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public async Task Indexing()
@@ -780,8 +782,6 @@ namespace DiRAG.Forms
                 await ragService.ProcessFoldersAsync(checkedFolders, progress);
 
                 toolStripStatusLabel1.Text = "Processing complete!";
-                MessageBox.Show("RAG processing completed successfully!", "Success",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
