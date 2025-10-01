@@ -49,13 +49,13 @@
             btnSaveChatSettings = new Krypton.Toolkit.KryptonButton();
             tabPageRAG = new TabPage();
             kryptonPanel3 = new Krypton.Toolkit.KryptonPanel();
-            txtMaxContextLength = new Krypton.Toolkit.KryptonTextBox();
+            nudMaxContextLength = new Krypton.Toolkit.KryptonNumericUpDown();
             lblMaxContextLength = new Krypton.Toolkit.KryptonLabel();
-            txtTopKChunks = new Krypton.Toolkit.KryptonTextBox();
+            nudTopKChunks = new Krypton.Toolkit.KryptonNumericUpDown();
             lblTopKChunks = new Krypton.Toolkit.KryptonLabel();
-            txtChunkOverlap = new Krypton.Toolkit.KryptonTextBox();
-            txtChunkSize = new Krypton.Toolkit.KryptonTextBox();
-            txtContextLength = new Krypton.Toolkit.KryptonTextBox();
+            nudChunkOverlap = new Krypton.Toolkit.KryptonNumericUpDown();
+            nudChunkSize = new Krypton.Toolkit.KryptonNumericUpDown();
+            nudContextLength = new Krypton.Toolkit.KryptonNumericUpDown();
             txtEmbeddingModel = new Krypton.Toolkit.KryptonTextBox();
             txtEmbeddingUrl = new Krypton.Toolkit.KryptonTextBox();
             lblEmbeddingUrl = new Krypton.Toolkit.KryptonLabel();
@@ -101,6 +101,11 @@
             tabPageRAG.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).BeginInit();
             kryptonPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudMaxContextLength).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudTopKChunks).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudChunkOverlap).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudChunkSize).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudContextLength).BeginInit();
             ((System.ComponentModel.ISupportInitialize)cmbGGUFModel).BeginInit();
             tabPageTheme.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kryptonPanel4).BeginInit();
@@ -322,13 +327,13 @@
             // 
             // kryptonPanel3
             //
-            kryptonPanel3.Controls.Add(txtMaxContextLength);
+            kryptonPanel3.Controls.Add(nudMaxContextLength);
             kryptonPanel3.Controls.Add(lblMaxContextLength);
-            kryptonPanel3.Controls.Add(txtTopKChunks);
+            kryptonPanel3.Controls.Add(nudTopKChunks);
             kryptonPanel3.Controls.Add(lblTopKChunks);
-            kryptonPanel3.Controls.Add(txtChunkOverlap);
-            kryptonPanel3.Controls.Add(txtChunkSize);
-            kryptonPanel3.Controls.Add(txtContextLength);
+            kryptonPanel3.Controls.Add(nudChunkOverlap);
+            kryptonPanel3.Controls.Add(nudChunkSize);
+            kryptonPanel3.Controls.Add(nudContextLength);
             kryptonPanel3.Controls.Add(txtEmbeddingModel);
             kryptonPanel3.Controls.Add(txtEmbeddingUrl);
             kryptonPanel3.Controls.Add(lblEmbeddingUrl);
@@ -347,16 +352,20 @@
             kryptonPanel3.Name = "kryptonPanel3";
             kryptonPanel3.Size = new Size(312, 419);
             kryptonPanel3.TabIndex = 0;
-            // 
-            // txtMaxContextLength
-            // 
-            txtMaxContextLength.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtMaxContextLength.Location = new Point(3, 352);
-            txtMaxContextLength.Margin = new Padding(3, 2, 3, 2);
-            txtMaxContextLength.Name = "txtMaxContextLength";
-            txtMaxContextLength.Size = new Size(295, 23);
-            txtMaxContextLength.TabIndex = 21;
-            txtMaxContextLength.Text = "6000";
+            //
+            // nudMaxContextLength
+            //
+            nudMaxContextLength.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            nudMaxContextLength.DecimalPlaces = 0;
+            nudMaxContextLength.Increment = new decimal(new int[] { 500, 0, 0, 0 });
+            nudMaxContextLength.Location = new Point(3, 352);
+            nudMaxContextLength.Margin = new Padding(3, 2, 3, 2);
+            nudMaxContextLength.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            nudMaxContextLength.Minimum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudMaxContextLength.Name = "nudMaxContextLength";
+            nudMaxContextLength.Size = new Size(295, 22);
+            nudMaxContextLength.TabIndex = 21;
+            nudMaxContextLength.Value = new decimal(new int[] { 8000, 0, 0, 0 });
             // 
             // lblMaxContextLength
             // 
@@ -366,16 +375,20 @@
             lblMaxContextLength.Size = new Size(163, 20);
             lblMaxContextLength.TabIndex = 20;
             lblMaxContextLength.Values.Text = "Max Context Length (chars):";
-            // 
-            // txtTopKChunks
-            // 
-            txtTopKChunks.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtTopKChunks.Location = new Point(3, 304);
-            txtTopKChunks.Margin = new Padding(3, 2, 3, 2);
-            txtTopKChunks.Name = "txtTopKChunks";
-            txtTopKChunks.Size = new Size(295, 23);
-            txtTopKChunks.TabIndex = 19;
-            txtTopKChunks.Text = "3";
+            //
+            // nudTopKChunks
+            //
+            nudTopKChunks.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            nudTopKChunks.DecimalPlaces = 0;
+            nudTopKChunks.Increment = new decimal(new int[] { 1, 0, 0, 0 });
+            nudTopKChunks.Location = new Point(3, 304);
+            nudTopKChunks.Margin = new Padding(3, 2, 3, 2);
+            nudTopKChunks.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
+            nudTopKChunks.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudTopKChunks.Name = "nudTopKChunks";
+            nudTopKChunks.Size = new Size(295, 22);
+            nudTopKChunks.TabIndex = 19;
+            nudTopKChunks.Value = new decimal(new int[] { 5, 0, 0, 0 });
             // 
             // lblTopKChunks
             // 
@@ -385,36 +398,48 @@
             lblTopKChunks.Size = new Size(88, 20);
             lblTopKChunks.TabIndex = 18;
             lblTopKChunks.Values.Text = "Top K Chunks:";
-            // 
-            // txtChunkOverlap
-            // 
-            txtChunkOverlap.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtChunkOverlap.Location = new Point(3, 274);
-            txtChunkOverlap.Margin = new Padding(3, 2, 3, 2);
-            txtChunkOverlap.Name = "txtChunkOverlap";
-            txtChunkOverlap.Size = new Size(295, 23);
-            txtChunkOverlap.TabIndex = 19;
-            txtChunkOverlap.Text = "100";
-            // 
-            // txtChunkSize
-            // 
-            txtChunkSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtChunkSize.Location = new Point(3, 226);
-            txtChunkSize.Margin = new Padding(3, 2, 3, 2);
-            txtChunkSize.Name = "txtChunkSize";
-            txtChunkSize.Size = new Size(295, 23);
-            txtChunkSize.TabIndex = 17;
-            txtChunkSize.Text = "500";
-            // 
-            // txtContextLength
-            // 
-            txtContextLength.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtContextLength.Location = new Point(3, 178);
-            txtContextLength.Margin = new Padding(3, 2, 3, 2);
-            txtContextLength.Name = "txtContextLength";
-            txtContextLength.Size = new Size(295, 23);
-            txtContextLength.TabIndex = 15;
-            txtContextLength.Text = "2048";
+            //
+            // nudChunkOverlap
+            //
+            nudChunkOverlap.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            nudChunkOverlap.DecimalPlaces = 0;
+            nudChunkOverlap.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            nudChunkOverlap.Location = new Point(3, 274);
+            nudChunkOverlap.Margin = new Padding(3, 2, 3, 2);
+            nudChunkOverlap.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudChunkOverlap.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
+            nudChunkOverlap.Name = "nudChunkOverlap";
+            nudChunkOverlap.Size = new Size(295, 22);
+            nudChunkOverlap.TabIndex = 19;
+            nudChunkOverlap.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            //
+            // nudChunkSize
+            //
+            nudChunkSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            nudChunkSize.DecimalPlaces = 0;
+            nudChunkSize.Increment = new decimal(new int[] { 50, 0, 0, 0 });
+            nudChunkSize.Location = new Point(3, 226);
+            nudChunkSize.Margin = new Padding(3, 2, 3, 2);
+            nudChunkSize.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
+            nudChunkSize.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
+            nudChunkSize.Name = "nudChunkSize";
+            nudChunkSize.Size = new Size(295, 22);
+            nudChunkSize.TabIndex = 17;
+            nudChunkSize.Value = new decimal(new int[] { 500, 0, 0, 0 });
+            //
+            // nudContextLength
+            //
+            nudContextLength.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            nudContextLength.DecimalPlaces = 0;
+            nudContextLength.Increment = new decimal(new int[] { 256, 0, 0, 0 });
+            nudContextLength.Location = new Point(3, 178);
+            nudContextLength.Margin = new Padding(3, 2, 3, 2);
+            nudContextLength.Maximum = new decimal(new int[] { 32768, 0, 0, 0 });
+            nudContextLength.Minimum = new decimal(new int[] { 512, 0, 0, 0 });
+            nudContextLength.Name = "nudContextLength";
+            nudContextLength.Size = new Size(295, 22);
+            nudContextLength.TabIndex = 15;
+            nudContextLength.Value = new decimal(new int[] { 2048, 0, 0, 0 });
             // 
             // txtEmbeddingModel
             // 
@@ -764,6 +789,11 @@
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).EndInit();
             kryptonPanel3.ResumeLayout(false);
             kryptonPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudMaxContextLength).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudTopKChunks).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudChunkOverlap).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudChunkSize).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudContextLength).EndInit();
             ((System.ComponentModel.ISupportInitialize)cmbGGUFModel).EndInit();
             tabPageTheme.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)kryptonPanel4).EndInit();
@@ -813,11 +843,11 @@
         private TabPage tabPageTheme;
         private Krypton.Toolkit.KryptonThemeListBox kryptonThemeListBox1;
         private Krypton.Toolkit.KryptonLabel lblContextLength;
-        private Krypton.Toolkit.KryptonTextBox txtContextLength;
+        private Krypton.Toolkit.KryptonNumericUpDown nudContextLength;
         private Krypton.Toolkit.KryptonLabel lblChunkSize;
-        private Krypton.Toolkit.KryptonTextBox txtChunkSize;
+        private Krypton.Toolkit.KryptonNumericUpDown nudChunkSize;
         private Krypton.Toolkit.KryptonLabel lblChunkOverlap;
-        private Krypton.Toolkit.KryptonTextBox txtChunkOverlap;
+        private Krypton.Toolkit.KryptonNumericUpDown nudChunkOverlap;
         private Krypton.Toolkit.KryptonRadioButton rbEmbeddingAPI;
         private Krypton.Toolkit.KryptonRadioButton rbEmbeddingGGUF;
         private Krypton.Toolkit.KryptonComboBox cmbGGUFModel;
@@ -829,9 +859,9 @@
         private Krypton.Toolkit.KryptonComboBox cmbAPIProvider;
         private Krypton.Toolkit.KryptonLabel lblAPIProvider;
         private Krypton.Toolkit.KryptonLabel lblTopKChunks;
-        private Krypton.Toolkit.KryptonTextBox txtTopKChunks;
+        private Krypton.Toolkit.KryptonNumericUpDown nudTopKChunks;
         private Krypton.Toolkit.KryptonLabel lblMaxContextLength;
-        private Krypton.Toolkit.KryptonTextBox txtMaxContextLength;
+        private Krypton.Toolkit.KryptonNumericUpDown nudMaxContextLength;
         private TabPage tabPageMCP;
         private Krypton.Toolkit.KryptonPanel kryptonPanel1;
         private Krypton.Toolkit.KryptonDataGridView dgvMcpServers;

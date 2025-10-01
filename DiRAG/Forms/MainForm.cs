@@ -191,11 +191,11 @@ namespace DiRAG.Forms
             // Load embedding settings
             txtEmbeddingUrl.Text = Properties.Settings.Default.Embedding_Url;
             txtEmbeddingModel.Text = Properties.Settings.Default.Embedding_Model;
-            txtContextLength.Text = Properties.Settings.Default.RAG_ContextLength.ToString();
-            txtChunkSize.Text = Properties.Settings.Default.RAG_ChunkSize.ToString();
-            txtChunkOverlap.Text = Properties.Settings.Default.RAG_ChunkOverlap.ToString();
-            txtTopKChunks.Text = Properties.Settings.Default.RAG_TopKChunks.ToString();
-            txtMaxContextLength.Text = Properties.Settings.Default.RAG_MaxContextLength.ToString();
+            nudContextLength.Value = Properties.Settings.Default.RAG_ContextLength;
+            nudChunkSize.Value = Properties.Settings.Default.RAG_ChunkSize;
+            nudChunkOverlap.Value = Properties.Settings.Default.RAG_ChunkOverlap;
+            nudTopKChunks.Value = Properties.Settings.Default.RAG_TopKChunks;
+            nudMaxContextLength.Value = Properties.Settings.Default.RAG_MaxContextLength;
 
             // Load embedding method
             var embeddingMethod = Properties.Settings.Default.EmbeddingMethod;
@@ -244,16 +244,11 @@ namespace DiRAG.Forms
             Properties.Settings.Default.Embedding_Url = txtEmbeddingUrl.Text;
             Properties.Settings.Default.Embedding_Model = txtEmbeddingModel.Text;
 
-            if (int.TryParse(txtContextLength.Text, out var contextLength))
-                Properties.Settings.Default.RAG_ContextLength = contextLength;
-            if (int.TryParse(txtChunkSize.Text, out var chunkSize))
-                Properties.Settings.Default.RAG_ChunkSize = chunkSize;
-            if (int.TryParse(txtChunkOverlap.Text, out var chunkOverlap))
-                Properties.Settings.Default.RAG_ChunkOverlap = chunkOverlap;
-            if (int.TryParse(txtTopKChunks.Text, out var topKChunks))
-                Properties.Settings.Default.RAG_TopKChunks = topKChunks;
-            if (int.TryParse(txtMaxContextLength.Text, out var maxContextLength))
-                Properties.Settings.Default.RAG_MaxContextLength = maxContextLength;
+            Properties.Settings.Default.RAG_ContextLength = (int)nudContextLength.Value;
+            Properties.Settings.Default.RAG_ChunkSize = (int)nudChunkSize.Value;
+            Properties.Settings.Default.RAG_ChunkOverlap = (int)nudChunkOverlap.Value;
+            Properties.Settings.Default.RAG_TopKChunks = (int)nudTopKChunks.Value;
+            Properties.Settings.Default.RAG_MaxContextLength = (int)nudMaxContextLength.Value;
 
             // Save embedding method
             Properties.Settings.Default.EmbeddingMethod = rbEmbeddingGGUF.Checked ? "GGUF" : "API";
