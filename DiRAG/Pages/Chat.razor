@@ -111,7 +111,7 @@
         MainForm.ThemeChanged += OnThemeChanged;
 
         // Apply initial theme
-        await ApplyThemeAsync(MainForm.IsDarkTheme);
+        await ApplyThemeAsync(MainForm.GetThemeMode());
 
         // Display selected directories on startup
         if (checkedFolders.Count > 0)
@@ -282,24 +282,29 @@
         }
     }
 
-    private async void OnThemeChanged(object? sender, bool isDarkTheme)
+    private async void OnThemeChanged(object? sender, string themeMode)
     {
-        await ApplyThemeAsync(isDarkTheme);
+        await ApplyThemeAsync(themeMode);
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task ApplyThemeAsync(bool isDarkTheme)
+    private async Task ApplyThemeAsync(string themeMode)
     {
         try
         {
-            if (isDarkTheme)
+            // Remove all theme classes first
+            await JSRuntime.InvokeVoidAsync("eval", "document.body.classList.remove('dark-mode', 'dark-mode-indigo')");
+
+            // Apply the appropriate theme class
+            if (themeMode == "dark-indigo")
+            {
+                await JSRuntime.InvokeVoidAsync("eval", "document.body.classList.add('dark-mode-indigo')");
+            }
+            else if (themeMode == "dark")
             {
                 await JSRuntime.InvokeVoidAsync("eval", "document.body.classList.add('dark-mode')");
             }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("eval", "document.body.classList.remove('dark-mode')");
-            }
+            // For "light" mode, no class is added (already removed above)
         }
         catch (Exception ex)
         {

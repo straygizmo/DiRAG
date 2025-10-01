@@ -171,3 +171,89 @@ body.dark-mode #chatContainer {
     background-color: #252525;
     border-color: #3a3a3a !important;
 }
+
+/* Indigo Dark mode styles (for Blue + Dark themes) */
+body.dark-mode-indigo {
+    background-color: #1a1a2e;
+    color: #e0e6f0;
+}
+
+body.dark-mode-indigo .border {
+    border-color: #2d3561 !important;
+}
+
+body.dark-mode-indigo .form-control {
+    background-color: #0f1624;
+    border-color: #2d3561;
+    color: #e0e6f0;
+}
+
+body.dark-mode-indigo .form-control:focus {
+    background-color: #0f1624;
+    border-color: #5865f2;
+    color: #e0e6f0;
+}
+
+body.dark-mode-indigo .btn-primary {
+    background-color: #5865f2;
+    border-color: #5865f2;
+    color: #fff;
+}
+
+body.dark-mode-indigo .btn-primary:hover {
+    background-color: #4752c4;
+    border-color: #4752c4;
+}
+
+body.dark-mode-indigo .btn-outline-secondary {
+    background-color: #16213e;
+    border-color: #2d3561;
+    color: #e0e6f0;
+}
+
+body.dark-mode-indigo .btn-outline-secondary:hover {
+    background-color: #1f2d52;
+    border-color: #3d4a7a;
+    color: #e0e6f0;
+}
+
+body.dark-mode-indigo .btn-outline-primary {
+    background-color: transparent;
+    border-color: #5865f2;
+    color: #7289da;
+}
+
+body.dark-mode-indigo .btn-outline-primary:hover {
+    background-color: #5865f2;
+    border-color: #5865f2;
+    color: #fff;
+}
+
+body.dark-mode-indigo .badge.bg-primary {
+    background-color: #5b7db1 !important;
+}
+
+body.dark-mode-indigo .badge.bg-secondary {
+    background-color: #2d3561 !important;
+}
+
+body.dark-mode-indigo .text-muted {
+    color: #8892b0 !important;
+}
+
+body.dark-mode-indigo .chat-error {
+    border: 2px solid #e74c3c !important;
+    background-color: #3a1f2e !important;
+    color: #ffb3c1 !important;
+}
+
+body.dark-mode-indigo .chat-info {
+    border: 1px solid #5865f2 !important;
+    background-color: #1a2340 !important;
+    color: #7dd3fc !important;
+}
+
+body.dark-mode-indigo #chatContainer {
+    background-color: #16213e;
+    border-color: #2d3561 !important;
+}

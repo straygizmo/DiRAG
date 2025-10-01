@@ -15,17 +15,18 @@ namespace DiRAG.Forms
         private McpServerCollection _mcpServerCollection = new();
 
         // Event to notify Blazor about theme changes
-        public event EventHandler<bool>? ThemeChanged;
+        public event EventHandler<string>? ThemeChanged;
 
         public bool IsDarkTheme
         {
             get
             {
-                return IsDarkThemeByName();
+                var mode = GetThemeMode();
+                return mode == "dark" || mode == "dark-indigo";
             }
         }
 
-        private bool IsDarkThemeByName()
+        public string GetThemeMode()
         {
             try
             {
@@ -33,15 +34,29 @@ namespace DiRAG.Forms
                 if (kryptonThemeListBox1.SelectedItem != null)
                 {
                     var themeName = kryptonThemeListBox1.SelectedItem.ToString() ?? "";
-                    // Check if theme name contains "Black" or "Dark"
-                    return themeName.Contains("Black", StringComparison.OrdinalIgnoreCase) ||
-                           themeName.Contains("Dark", StringComparison.OrdinalIgnoreCase);
+
+                    // Check if theme name contains both "Blue" and "Dark" → Indigo dark mode
+                    if (themeName.Contains("Blue", StringComparison.OrdinalIgnoreCase) &&
+                        themeName.Contains("Dark", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return "dark-indigo";
+                    }
+
+                    // Check if theme name contains "Black" or "Dark" → Regular dark mode
+                    if (themeName.Contains("Black", StringComparison.OrdinalIgnoreCase) ||
+                        themeName.Contains("Dark", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return "dark";
+                    }
+
+                    // Otherwise → Light mode
+                    return "light";
                 }
-                return false;
+                return "light";
             }
             catch
             {
-                return false;
+                return "light";
             }
         }
 
@@ -623,8 +638,8 @@ namespace DiRAG.Forms
             Properties.Settings.Default.UI_Theme = kryptonThemeListBox1.SelectedIndex;
             Properties.Settings.Default.Save();
 
-            // Notify Blazor about theme change
-            ThemeChanged?.Invoke(this, IsDarkTheme);
+            // Notify Blazor about theme change with theme mode
+            ThemeChanged?.Invoke(this, GetThemeMode());
         }
 
         private void LoadFolderTree()
