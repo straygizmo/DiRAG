@@ -267,5 +267,29 @@ namespace DiRAG.Properties {
                 this["PreferredLanguage"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("API")]
+        public string EmbeddingMethod {
+            get {
+                return ((string)(this["EmbeddingMethod"]));
+            }
+            set {
+                this["EmbeddingMethod"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmbeddingGGUFModel {
+            get {
+                return ((string)(this["EmbeddingGGUFModel"]));
+            }
+            set {
+                this["EmbeddingGGUFModel"] = value;
+            }
+        }
     }
 }

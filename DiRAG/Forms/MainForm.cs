@@ -58,12 +58,13 @@ namespace DiRAG.Forms
                 var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
                 var embeddingModel = Properties.Settings.Default.Embedding_Model;
                 var useNativeEmbedding = Properties.Settings.Default.UseNativeEmbedding;
+                var ggufModel = Properties.Settings.Default.EmbeddingGGUFModel;
                 var contextLength = Properties.Settings.Default.RAG_ContextLength;
                 var chunkSize = Properties.Settings.Default.RAG_ChunkSize;
                 var chunkOverlap = Properties.Settings.Default.RAG_ChunkOverlap;
 
                 return new RagService(embeddingUrl, apiKey, embeddingModel, useNativeEmbedding,
-                    contextLength, chunkSize, chunkOverlap);
+                    contextLength, chunkSize, chunkOverlap, ggufModel);
             });
 
             // Choose the chat service based on the selected API provider
@@ -147,9 +148,32 @@ namespace DiRAG.Forms
             txtContextLength.Text = Properties.Settings.Default.RAG_ContextLength.ToString();
             txtChunkSize.Text = Properties.Settings.Default.RAG_ChunkSize.ToString();
             txtChunkOverlap.Text = Properties.Settings.Default.RAG_ChunkOverlap.ToString();
-            chkUseNativeEmbedding.Checked = Properties.Settings.Default.UseNativeEmbedding;
             txtTopKChunks.Text = Properties.Settings.Default.RAG_TopKChunks.ToString();
             txtMaxContextLength.Text = Properties.Settings.Default.RAG_MaxContextLength.ToString();
+
+            // Load embedding method
+            var embeddingMethod = Properties.Settings.Default.EmbeddingMethod;
+            if (embeddingMethod == "GGUF")
+            {
+                rbEmbeddingGGUF.Checked = true;
+            }
+            else
+            {
+                rbEmbeddingAPI.Checked = true;
+            }
+
+            // Load GGUF models
+            LoadGGUFModels();
+
+            // Load selected GGUF model
+            var ggufModel = Properties.Settings.Default.EmbeddingGGUFModel;
+            if (!string.IsNullOrEmpty(ggufModel) && cmbGGUFModel.Items.Contains(ggufModel))
+            {
+                cmbGGUFModel.SelectedItem = ggufModel;
+            }
+
+            // Update UI visibility based on selected method
+            UpdateEmbeddingMethodUI();
 
             var selectedIndex = Properties.Settings.Default.UI_Theme;
             if (selectedIndex >= 0)
@@ -185,7 +209,12 @@ namespace DiRAG.Forms
             if (int.TryParse(txtMaxContextLength.Text, out var maxContextLength))
                 Properties.Settings.Default.RAG_MaxContextLength = maxContextLength;
 
-            Properties.Settings.Default.UseNativeEmbedding = chkUseNativeEmbedding.Checked;
+            // Save embedding method
+            Properties.Settings.Default.EmbeddingMethod = rbEmbeddingGGUF.Checked ? "GGUF" : "API";
+            Properties.Settings.Default.EmbeddingGGUFModel = cmbGGUFModel.SelectedItem?.ToString() ?? "";
+
+            // For backward compatibility, set UseNativeEmbedding based on embedding method
+            Properties.Settings.Default.UseNativeEmbedding = rbEmbeddingGGUF.Checked;
 
             Properties.Settings.Default.Save();
 
@@ -200,21 +229,34 @@ namespace DiRAG.Forms
                 var embeddingUrl = txtEmbeddingUrl.Text;
                 var embeddingModel = txtEmbeddingModel.Text;
                 var apiKey = Properties.Settings.Default.OpenAI_ApiKey;
-                var useNativeEmbedding = chkUseNativeEmbedding.Checked;
+                var useNativeEmbedding = rbEmbeddingGGUF.Checked;
+                var ggufModel = cmbGGUFModel.SelectedItem?.ToString() ?? "";
 
                 // Validate settings
-                if (string.IsNullOrWhiteSpace(embeddingUrl))
+                if (useNativeEmbedding)
                 {
-                    MessageBox.Show("Embedding URL is required.", "Validation Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    if (string.IsNullOrWhiteSpace(ggufModel))
+                    {
+                        MessageBox.Show("GGUF Model is required.", "Validation Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                 }
-
-                if (string.IsNullOrWhiteSpace(embeddingModel))
+                else
                 {
-                    MessageBox.Show("Embedding Model is required.", "Validation Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    if (string.IsNullOrWhiteSpace(embeddingUrl))
+                    {
+                        MessageBox.Show("Embedding URL is required.", "Validation Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(embeddingModel))
+                    {
+                        MessageBox.Show("Embedding Model is required.", "Validation Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                 }
 
                 // Disable button during test
@@ -236,7 +278,8 @@ namespace DiRAG.Forms
                         useNativeEmbedding,
                         contextLength: 2048,
                         chunkSize: 500,
-                        chunkOverlap: 100
+                        chunkOverlap: 100,
+                        ggufModel: ggufModel
                     );
 
                     const string testText = "This is a test to verify the embedding configuration.";
@@ -420,7 +463,6 @@ namespace DiRAG.Forms
             lblChunkOverlap.Values.Text = loc.GetString("ChunkOverlap") + ":";
             lblMaxContextLength.Values.Text = loc.GetString("MaxContextLength") + ":";
             lblTopKChunks.Values.Text = loc.GetString("TopKChunks") + ":";
-            chkUseNativeEmbedding.Values.Text = loc.GetString("UseNativeEmbedding");
 
             // Update button texts
             btnSaveChatSettings.Values.Text = loc.GetString("Save");
@@ -460,6 +502,88 @@ namespace DiRAG.Forms
 
                 // Hide Claude Code settings panel
                 claudeCodeSettingsControl.Visible = false;
+            }
+        }
+
+        private void LoadGGUFModels()
+        {
+            cmbGGUFModel.Items.Clear();
+
+            try
+            {
+                var modelsPath = Path.Combine(PythonPathHelper.PythonToolsDirectory, "models");
+
+                if (!Directory.Exists(modelsPath))
+                {
+                    return;
+                }
+
+                // Enumerate all folders and .gguf files
+                foreach (var dir in Directory.GetDirectories(modelsPath))
+                {
+                    var dirName = Path.GetFileName(dir);
+                    // Check if there are .gguf files in the folder
+                    var ggufFiles = Directory.GetFiles(dir, "*.gguf");
+                    foreach (var ggufFile in ggufFiles)
+                    {
+                        var fileName = Path.GetFileName(ggufFile);
+                        var displayName = $"{dirName}/{fileName}";
+                        cmbGGUFModel.Items.Add(displayName);
+                    }
+                }
+
+                // Also check for .gguf files directly in models folder
+                foreach (var ggufFile in Directory.GetFiles(modelsPath, "*.gguf"))
+                {
+                    var fileName = Path.GetFileName(ggufFile);
+                    cmbGGUFModel.Items.Add(fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading GGUF models: {ex.Message}");
+            }
+        }
+
+        private void UpdateEmbeddingMethodUI()
+        {
+            if (rbEmbeddingAPI.Checked)
+            {
+                // Show API controls
+                txtEmbeddingUrl.Visible = true;
+                lblEmbeddingUrl.Visible = true;
+                txtEmbeddingModel.Visible = true;
+                lblEmbeddingModel.Visible = true;
+
+                // Hide GGUF controls
+                cmbGGUFModel.Visible = false;
+            }
+            else if (rbEmbeddingGGUF.Checked)
+            {
+                // Hide API controls
+                txtEmbeddingUrl.Visible = false;
+                lblEmbeddingUrl.Visible = false;
+                txtEmbeddingModel.Visible = false;
+                lblEmbeddingModel.Visible = false;
+
+                // Show GGUF controls
+                cmbGGUFModel.Visible = true;
+            }
+        }
+
+        private void rbEmbeddingAPI_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (rbEmbeddingAPI.Checked)
+            {
+                UpdateEmbeddingMethodUI();
+            }
+        }
+
+        private void rbEmbeddingGGUF_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (rbEmbeddingGGUF.Checked)
+            {
+                UpdateEmbeddingMethodUI();
             }
         }
 
@@ -580,15 +704,29 @@ namespace DiRAG.Forms
                 var chunkSize = Properties.Settings.Default.RAG_ChunkSize;
                 var chunkOverlap = Properties.Settings.Default.RAG_ChunkOverlap;
                 var useNativeEmbedding = Properties.Settings.Default.UseNativeEmbedding;
+                var ggufModel = Properties.Settings.Default.EmbeddingGGUFModel;
 
-                if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(embeddingModel))
+                // Validation based on embedding method
+                if (useNativeEmbedding)
                 {
-                    MessageBox.Show("Please configure Embedding settings in the Settings tab.",
-                        "Configuration Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    if (string.IsNullOrEmpty(ggufModel))
+                    {
+                        MessageBox.Show("Please select a GGUF model in the Settings tab.",
+                            "Configuration Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(embeddingModel))
+                    {
+                        MessageBox.Show("Please configure Embedding settings in the Settings tab.",
+                            "Configuration Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                 }
 
-                var ragService = new Services.RagService(embeddingUrl, apiKey, embeddingModel, useNativeEmbedding, contextLength, chunkSize, chunkOverlap);
+                var ragService = new Services.RagService(embeddingUrl, apiKey, embeddingModel, useNativeEmbedding, contextLength, chunkSize, chunkOverlap, ggufModel);
                 var progress = new Progress<string>(status =>
                 {
                     toolStripStatusLabel1.Text = status;

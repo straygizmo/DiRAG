@@ -63,7 +63,10 @@
             lblContextLength = new Krypton.Toolkit.KryptonLabel();
             lblChunkSize = new Krypton.Toolkit.KryptonLabel();
             lblChunkOverlap = new Krypton.Toolkit.KryptonLabel();
-            chkUseNativeEmbedding = new Krypton.Toolkit.KryptonCheckBox();
+            rbEmbeddingAPI = new Krypton.Toolkit.KryptonRadioButton();
+            rbEmbeddingGGUF = new Krypton.Toolkit.KryptonRadioButton();
+            cmbGGUFModel = new Krypton.Toolkit.KryptonComboBox();
+            lblEmbeddingMethod = new Krypton.Toolkit.KryptonLabel();
             btnTestEmbedding = new Krypton.Toolkit.KryptonButton();
             btnSaveRAGSettings = new Krypton.Toolkit.KryptonButton();
             tabPageTheme = new TabPage();
@@ -98,6 +101,7 @@
             tabPageRAG.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).BeginInit();
             kryptonPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)cmbGGUFModel).BeginInit();
             tabPageTheme.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kryptonPanel4).BeginInit();
             kryptonPanel4.SuspendLayout();
@@ -317,7 +321,7 @@
             tabPageRAG.UseVisualStyleBackColor = true;
             // 
             // kryptonPanel3
-            // 
+            //
             kryptonPanel3.Controls.Add(txtMaxContextLength);
             kryptonPanel3.Controls.Add(lblMaxContextLength);
             kryptonPanel3.Controls.Add(txtTopKChunks);
@@ -332,7 +336,10 @@
             kryptonPanel3.Controls.Add(lblContextLength);
             kryptonPanel3.Controls.Add(lblChunkSize);
             kryptonPanel3.Controls.Add(lblChunkOverlap);
-            kryptonPanel3.Controls.Add(chkUseNativeEmbedding);
+            kryptonPanel3.Controls.Add(rbEmbeddingAPI);
+            kryptonPanel3.Controls.Add(rbEmbeddingGGUF);
+            kryptonPanel3.Controls.Add(cmbGGUFModel);
+            kryptonPanel3.Controls.Add(lblEmbeddingMethod);
             kryptonPanel3.Controls.Add(btnTestEmbedding);
             kryptonPanel3.Dock = DockStyle.Fill;
             kryptonPanel3.Location = new Point(3, 2);
@@ -382,107 +389,138 @@
             // txtChunkOverlap
             // 
             txtChunkOverlap.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtChunkOverlap.Location = new Point(3, 220);
+            txtChunkOverlap.Location = new Point(3, 274);
             txtChunkOverlap.Margin = new Padding(3, 2, 3, 2);
             txtChunkOverlap.Name = "txtChunkOverlap";
             txtChunkOverlap.Size = new Size(295, 23);
-            txtChunkOverlap.TabIndex = 16;
+            txtChunkOverlap.TabIndex = 19;
             txtChunkOverlap.Text = "100";
             // 
             // txtChunkSize
             // 
             txtChunkSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtChunkSize.Location = new Point(3, 172);
+            txtChunkSize.Location = new Point(3, 226);
             txtChunkSize.Margin = new Padding(3, 2, 3, 2);
             txtChunkSize.Name = "txtChunkSize";
             txtChunkSize.Size = new Size(295, 23);
-            txtChunkSize.TabIndex = 14;
+            txtChunkSize.TabIndex = 17;
             txtChunkSize.Text = "500";
             // 
             // txtContextLength
             // 
             txtContextLength.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtContextLength.Location = new Point(3, 124);
+            txtContextLength.Location = new Point(3, 178);
             txtContextLength.Margin = new Padding(3, 2, 3, 2);
             txtContextLength.Name = "txtContextLength";
             txtContextLength.Size = new Size(295, 23);
-            txtContextLength.TabIndex = 12;
+            txtContextLength.TabIndex = 15;
             txtContextLength.Text = "2048";
             // 
             // txtEmbeddingModel
             // 
             txtEmbeddingModel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtEmbeddingModel.Location = new Point(3, 75);
+            txtEmbeddingModel.Location = new Point(3, 131);
             txtEmbeddingModel.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingModel.Name = "txtEmbeddingModel";
             txtEmbeddingModel.Size = new Size(295, 23);
-            txtEmbeddingModel.TabIndex = 10;
+            txtEmbeddingModel.TabIndex = 13;
             txtEmbeddingModel.Text = "text-embedding-embeddinggemma-300m";
             // 
             // txtEmbeddingUrl
-            // 
+            //
             txtEmbeddingUrl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtEmbeddingUrl.Location = new Point(3, 28);
+            txtEmbeddingUrl.Location = new Point(3, 80);
             txtEmbeddingUrl.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingUrl.Name = "txtEmbeddingUrl";
             txtEmbeddingUrl.Size = new Size(295, 23);
-            txtEmbeddingUrl.TabIndex = 8;
+            txtEmbeddingUrl.TabIndex = 11;
             txtEmbeddingUrl.Text = "http://localhost:/1234";
             // 
+            // lblEmbeddingMethod
+            //
+            lblEmbeddingMethod.Location = new Point(3, 10);
+            lblEmbeddingMethod.Margin = new Padding(3, 2, 3, 2);
+            lblEmbeddingMethod.Name = "lblEmbeddingMethod";
+            lblEmbeddingMethod.Size = new Size(120, 20);
+            lblEmbeddingMethod.TabIndex = 6;
+            lblEmbeddingMethod.Values.Text = "Embedding Method:";
+            //
+            // rbEmbeddingAPI
+            //
+            rbEmbeddingAPI.Location = new Point(3, 32);
+            rbEmbeddingAPI.Margin = new Padding(3, 2, 3, 2);
+            rbEmbeddingAPI.Name = "rbEmbeddingAPI";
+            rbEmbeddingAPI.Size = new Size(42, 20);
+            rbEmbeddingAPI.TabIndex = 7;
+            rbEmbeddingAPI.Values.Text = "API";
+            rbEmbeddingAPI.CheckedChanged += rbEmbeddingAPI_CheckedChanged;
+            //
+            // rbEmbeddingGGUF
+            //
+            rbEmbeddingGGUF.Location = new Point(80, 32);
+            rbEmbeddingGGUF.Margin = new Padding(3, 2, 3, 2);
+            rbEmbeddingGGUF.Name = "rbEmbeddingGGUF";
+            rbEmbeddingGGUF.Size = new Size(54, 20);
+            rbEmbeddingGGUF.TabIndex = 8;
+            rbEmbeddingGGUF.Values.Text = "GGUF";
+            rbEmbeddingGGUF.CheckedChanged += rbEmbeddingGGUF_CheckedChanged;
+            //
+            // cmbGGUFModel
+            //
+            cmbGGUFModel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbGGUFModel.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbGGUFModel.DropDownWidth = 295;
+            cmbGGUFModel.Location = new Point(3, 56);
+            cmbGGUFModel.Margin = new Padding(3, 2, 3, 2);
+            cmbGGUFModel.Name = "cmbGGUFModel";
+            cmbGGUFModel.Size = new Size(295, 22);
+            cmbGGUFModel.TabIndex = 9;
+            cmbGGUFModel.Visible = false;
+            //
             // lblEmbeddingUrl
-            // 
-            lblEmbeddingUrl.Location = new Point(3, 10);
+            //
+            lblEmbeddingUrl.Location = new Point(3, 56);
             lblEmbeddingUrl.Margin = new Padding(3, 2, 3, 2);
             lblEmbeddingUrl.Name = "lblEmbeddingUrl";
             lblEmbeddingUrl.Size = new Size(101, 20);
-            lblEmbeddingUrl.TabIndex = 7;
+            lblEmbeddingUrl.TabIndex = 10;
             lblEmbeddingUrl.Values.Text = "Embedding URL:";
             // 
             // lblEmbeddingModel
-            // 
-            lblEmbeddingModel.Location = new Point(3, 57);
+            //
+            lblEmbeddingModel.Location = new Point(3, 107);
             lblEmbeddingModel.Margin = new Padding(3, 2, 3, 2);
             lblEmbeddingModel.Name = "lblEmbeddingModel";
             lblEmbeddingModel.Size = new Size(114, 20);
-            lblEmbeddingModel.TabIndex = 9;
+            lblEmbeddingModel.TabIndex = 12;
             lblEmbeddingModel.Values.Text = "Embedding Model:";
-            // 
+            //
             // lblContextLength
-            // 
-            lblContextLength.Location = new Point(3, 104);
+            //
+            lblContextLength.Location = new Point(3, 154);
             lblContextLength.Margin = new Padding(3, 2, 3, 2);
             lblContextLength.Name = "lblContextLength";
             lblContextLength.Size = new Size(97, 20);
-            lblContextLength.TabIndex = 11;
+            lblContextLength.TabIndex = 14;
             lblContextLength.Values.Text = "Context Length:";
-            // 
+            //
             // lblChunkSize
-            // 
-            lblChunkSize.Location = new Point(3, 152);
+            //
+            lblChunkSize.Location = new Point(3, 202);
             lblChunkSize.Margin = new Padding(3, 2, 3, 2);
             lblChunkSize.Name = "lblChunkSize";
             lblChunkSize.Size = new Size(73, 20);
-            lblChunkSize.TabIndex = 13;
+            lblChunkSize.TabIndex = 16;
             lblChunkSize.Values.Text = "Chunk Size:";
-            // 
+            //
             // lblChunkOverlap
-            // 
-            lblChunkOverlap.Location = new Point(3, 200);
+            //
+            lblChunkOverlap.Location = new Point(3, 250);
             lblChunkOverlap.Margin = new Padding(3, 2, 3, 2);
             lblChunkOverlap.Name = "lblChunkOverlap";
             lblChunkOverlap.Size = new Size(94, 20);
-            lblChunkOverlap.TabIndex = 15;
+            lblChunkOverlap.TabIndex = 18;
             lblChunkOverlap.Values.Text = "Chunk Overlap:";
-            // 
-            // chkUseNativeEmbedding
-            // 
-            chkUseNativeEmbedding.Location = new Point(3, 250);
-            chkUseNativeEmbedding.Margin = new Padding(3, 2, 3, 2);
-            chkUseNativeEmbedding.Name = "chkUseNativeEmbedding";
-            chkUseNativeEmbedding.Size = new Size(148, 20);
-            chkUseNativeEmbedding.TabIndex = 17;
-            chkUseNativeEmbedding.Values.Text = "Use Native Embedding";
-            chkUseNativeEmbedding.Visible = true;
             // 
             // btnTestEmbedding
             // 
@@ -726,6 +764,7 @@
             ((System.ComponentModel.ISupportInitialize)kryptonPanel3).EndInit();
             kryptonPanel3.ResumeLayout(false);
             kryptonPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)cmbGGUFModel).EndInit();
             tabPageTheme.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)kryptonPanel4).EndInit();
             kryptonPanel4.ResumeLayout(false);
@@ -779,7 +818,10 @@
         private Krypton.Toolkit.KryptonTextBox txtChunkSize;
         private Krypton.Toolkit.KryptonLabel lblChunkOverlap;
         private Krypton.Toolkit.KryptonTextBox txtChunkOverlap;
-        private Krypton.Toolkit.KryptonCheckBox chkUseNativeEmbedding;
+        private Krypton.Toolkit.KryptonRadioButton rbEmbeddingAPI;
+        private Krypton.Toolkit.KryptonRadioButton rbEmbeddingGGUF;
+        private Krypton.Toolkit.KryptonComboBox cmbGGUFModel;
+        private Krypton.Toolkit.KryptonLabel lblEmbeddingMethod;
         private Krypton.Toolkit.KryptonToolStrip kToolStripDirTree;
         private ToolStripButton tsbIndexing;
         private ToolStripButton tspRefresh;

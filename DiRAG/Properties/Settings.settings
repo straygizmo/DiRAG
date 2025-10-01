@@ -68,5 +68,11 @@
     <Setting Name="PreferredLanguage" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
     </Setting>
+    <Setting Name="EmbeddingMethod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">API</Value>
+    </Setting>
+    <Setting Name="EmbeddingGGUFModel" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

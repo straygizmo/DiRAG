@@ -17,6 +17,7 @@ namespace DiRAG.Services
         private readonly string _embeddingUrl;
         private readonly string _apiKey;
         private readonly string _embeddingModel;
+        private readonly string _ggufModel;
         private readonly int _contextLength;
         private readonly int _chunkSize;
         private readonly int _chunkOverlap;
@@ -29,12 +30,13 @@ namespace DiRAG.Services
                                                            ".go", ".rs", ".rb", ".php", ".swift", ".kt", ".scala",
                                                            ".pdf", ".docx", ".xlsx", ".pptx", ".doc", ".xls", ".ppt" };
 
-        public RagService(string embeddingUrl, string apiKey, string embeddingModel, bool useNativeEmbedding = false, int contextLength = 2048, int chunkSize = 500, int chunkOverlap = 100)
+        public RagService(string embeddingUrl, string apiKey, string embeddingModel, bool useNativeEmbedding = false, int contextLength = 2048, int chunkSize = 500, int chunkOverlap = 100, string ggufModel = "")
         {
             _pythonService = new PythonInteropService();
             _embeddingUrl = embeddingUrl;
             _apiKey = apiKey;
             _embeddingModel = embeddingModel;
+            _ggufModel = ggufModel;
             _useNativeEmbedding = useNativeEmbedding;
             _contextLength = contextLength;
             _chunkSize = Math.Min(chunkSize, contextLength);
