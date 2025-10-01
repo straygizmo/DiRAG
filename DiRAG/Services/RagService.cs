@@ -315,7 +315,7 @@ namespace DiRAG.Services
         {
             if (_useNativeEmbedding)
             {
-                // Use native embeddinggemma_loader for batch processing
+                // Use native gguf_loader for batch processing
                 await EmbedChunksNativeAsync(chunks);
             }
             else
@@ -563,7 +563,7 @@ namespace DiRAG.Services
         {
             if (_useNativeEmbedding)
             {
-                // Use native embeddinggemma_loader (Python GGUF implementation)
+                // Use native gguf_loader (Python GGUF implementation)
                 return await GenerateEmbeddingNativeAsync(text);
             }
             else

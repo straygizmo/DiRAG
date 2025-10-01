@@ -311,7 +311,7 @@ namespace DiRAG.Forms
 
                 if (useNativeEmbedding)
                 {
-                    // Use native embeddinggemma_loader (Python GGUF implementation)
+                    // Use native gguf_loader (Python GGUF implementation)
                     var ragService = new RagService(
                         embeddingUrl,
                         apiKey,
@@ -327,7 +327,7 @@ namespace DiRAG.Forms
                     var embedding = await ragService.GenerateEmbeddingAsync(testText);
 
                     message = $"✓ Connection Successful!\n\n" +
-                             $"Method: Native GGUF (embeddinggemma_loader)\n" +
+                             $"Method: Native GGUF (gguf_loader)\n" +
                              $"Embedding Model: Local GGUF\n" +
                              $"Embedding Dimension: {embedding.Length}\n" +
                              $"Sample values: [{string.Join(", ", embedding.Take(5).Select(f => f.ToString("F4")))}...]";
@@ -594,7 +594,7 @@ namespace DiRAG.Forms
                 txtEmbeddingUrl.Visible = true;
                 lblEmbeddingUrl.Visible = true;
                 txtEmbeddingModel.Visible = true;
-                lblEmbeddingModel.Visible = true;
+                lblEmbeddingModel.Location = new Point(3, 85);
 
                 // Hide GGUF controls
                 cmbGGUFModel.Visible = false;
@@ -605,7 +605,7 @@ namespace DiRAG.Forms
                 txtEmbeddingUrl.Visible = false;
                 lblEmbeddingUrl.Visible = false;
                 txtEmbeddingModel.Visible = false;
-                lblEmbeddingModel.Visible = false;
+                lblEmbeddingModel.Location = new Point(3, 34);
 
                 // Show GGUF controls
                 cmbGGUFModel.Visible = true;
@@ -1063,7 +1063,8 @@ namespace DiRAG.Forms
                 {
                     var success = await _mcpService.LoadServerAsync(server);
 
-                    Invoke(() => {
+                    Invoke(() =>
+                    {
                         if (success)
                         {
                             AppendMcpLog($"Connection successful! Getting tools...");
@@ -1077,7 +1078,8 @@ namespace DiRAG.Forms
                     if (success)
                     {
                         var tools = await _mcpService.GetServerToolsAsync(server.Id);
-                        Invoke(() => {
+                        Invoke(() =>
+                        {
                             AppendMcpLog($"Test successful! Server provides {tools.Count} tools.");
                             if (tools.Count > 0)
                             {
@@ -1099,7 +1101,8 @@ namespace DiRAG.Forms
                 }
                 catch (Exception ex)
                 {
-                    Invoke(() => {
+                    Invoke(() =>
+                    {
                         AppendMcpLog($"Test error: {ex.Message}");
                         if (ex.InnerException != null)
                         {
@@ -1111,7 +1114,8 @@ namespace DiRAG.Forms
                 }
                 finally
                 {
-                    Invoke(() => {
+                    Invoke(() =>
+                    {
                         RefreshMcpServerList();
                         btnTestMcpServer.Enabled = true;
                     });
