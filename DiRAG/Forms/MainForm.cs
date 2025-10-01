@@ -21,17 +21,28 @@ namespace DiRAG.Forms
         {
             get
             {
-                var themeIndex = Properties.Settings.Default.UI_Theme;
-                return IsDarkThemeByIndex(themeIndex);
+                return IsDarkThemeByName();
             }
         }
 
-        private bool IsDarkThemeByIndex(int index)
+        private bool IsDarkThemeByName()
         {
-            // Krypton theme names containing "Black" or "Dark" are considered dark themes
-            // Based on KryptonThemeListBox standard themes
-            var darkThemeIndices = new[] { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23 }; // Black/Dark variants
-            return darkThemeIndices.Contains(index);
+            try
+            {
+                // Get the selected theme name from KryptonThemeListBox
+                if (kryptonThemeListBox1.SelectedItem != null)
+                {
+                    var themeName = kryptonThemeListBox1.SelectedItem.ToString() ?? "";
+                    // Check if theme name contains "Black" or "Dark"
+                    return themeName.Contains("Black", StringComparison.OrdinalIgnoreCase) ||
+                           themeName.Contains("Dark", StringComparison.OrdinalIgnoreCase);
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public MainForm()
