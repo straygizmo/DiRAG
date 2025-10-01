@@ -191,7 +191,7 @@ namespace DiRAG.Forms
             // Load embedding settings
             txtEmbeddingUrl.Text = Properties.Settings.Default.Embedding_Url;
             txtEmbeddingModel.Text = Properties.Settings.Default.Embedding_Model;
-            nudContextLength.Value = Properties.Settings.Default.RAG_ContextLength;
+            nudModelContextLength.Value = Properties.Settings.Default.RAG_ContextLength;
             nudChunkSize.Value = Properties.Settings.Default.RAG_ChunkSize;
             nudChunkOverlap.Value = Properties.Settings.Default.RAG_ChunkOverlap;
             nudTopKChunks.Value = Properties.Settings.Default.RAG_TopKChunks;
@@ -244,7 +244,7 @@ namespace DiRAG.Forms
             Properties.Settings.Default.Embedding_Url = txtEmbeddingUrl.Text;
             Properties.Settings.Default.Embedding_Model = txtEmbeddingModel.Text;
 
-            Properties.Settings.Default.RAG_ContextLength = (int)nudContextLength.Value;
+            Properties.Settings.Default.RAG_ContextLength = (int)nudModelContextLength.Value;
             Properties.Settings.Default.RAG_ChunkSize = (int)nudChunkSize.Value;
             Properties.Settings.Default.RAG_ChunkOverlap = (int)nudChunkOverlap.Value;
             Properties.Settings.Default.RAG_TopKChunks = (int)nudTopKChunks.Value;
@@ -499,10 +499,10 @@ namespace DiRAG.Forms
             // Update RAG Settings labels
             lblEmbeddingUrl.Values.Text = loc.GetString("EmbeddingURL") + ":";
             lblEmbeddingModel.Values.Text = loc.GetString("EmbeddingModel") + ":";
-            lblContextLength.Values.Text = loc.GetString("ContextLength") + ":";
+            lblModelContextLength.Values.Text = loc.GetString("ModelContextLength") + ":";
             lblChunkSize.Values.Text = loc.GetString("ChunkSize") + ":";
             lblChunkOverlap.Values.Text = loc.GetString("ChunkOverlap") + ":";
-            lblMaxContextLength.Values.Text = loc.GetString("MaxContextLength") + ":";
+            lblTotalMaxContextLength.Values.Text = loc.GetString("TotalMaxContextLength") + ":";
             lblTopKChunks.Values.Text = loc.GetString("TopKChunks") + ":";
 
             // Update button texts

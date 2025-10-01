@@ -185,8 +185,8 @@
   <data name="EmbeddingModel" xml:space="preserve">
     <value>Embedding Model</value>
   </data>
-  <data name="ContextLength" xml:space="preserve">
-    <value>Context Length</value>
+  <data name="ModelContextLength" xml:space="preserve">
+    <value>Model Context Length</value>
   </data>
   <data name="ChunkSize" xml:space="preserve">
     <value>Chunk Size</value>
@@ -194,8 +194,8 @@
   <data name="ChunkOverlap" xml:space="preserve">
     <value>Chunk Overlap</value>
   </data>
-  <data name="MaxContextLength" xml:space="preserve">
-    <value>Max Context Length</value>
+  <data name="TotalMaxContextLength" xml:space="preserve">
+    <value>Total Max Context Length (chars)</value>
   </data>
   <data name="TopKChunks" xml:space="preserve">
     <value>Top K Chunks</value>
