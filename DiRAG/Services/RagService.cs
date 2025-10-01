@@ -69,12 +69,12 @@ namespace DiRAG.Services
         {
             if (_useNativeEmbedding)
             {
-                // Use C# native implementation
+                // Use native GGUF embedding (Python)
                 await ProcessFoldersNativeAsync(folderPaths, progress);
             }
             else
             {
-                // Use Python implementation
+                // Use OpenAI-compatible API with Python RAG indexer
                 await ProcessFoldersPythonAsync(folderPaths, progress);
             }
         }
