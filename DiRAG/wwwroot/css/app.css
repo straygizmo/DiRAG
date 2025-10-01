@@ -85,3 +85,89 @@ a, .btn-link {
     background-color: #cff4fc !important;
     color: #055160 !important;
 }
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+body.dark-mode .border {
+    border-color: #3a3a3a !important;
+}
+
+body.dark-mode .form-control {
+    background-color: #2d2d2d;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-control:focus {
+    background-color: #2d2d2d;
+    border-color: #4a90e2;
+    color: #e0e0e0;
+}
+
+body.dark-mode .btn-primary {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+    color: #fff;
+}
+
+body.dark-mode .btn-primary:hover {
+    background-color: #3a7bc8;
+    border-color: #3a7bc8;
+}
+
+body.dark-mode .btn-outline-secondary {
+    background-color: #2d2d2d;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: #3a3a3a;
+    border-color: #4a4a4a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .btn-outline-primary {
+    background-color: transparent;
+    border-color: #4a90e2;
+    color: #4a90e2;
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+    color: #fff;
+}
+
+body.dark-mode .badge.bg-primary {
+    background-color: #4a90e2 !important;
+}
+
+body.dark-mode .badge.bg-secondary {
+    background-color: #3a3a3a !important;
+}
+
+body.dark-mode .text-muted {
+    color: #a0a0a0 !important;
+}
+
+body.dark-mode .chat-error {
+    border: 2px solid #e74c3c !important;
+    background-color: #3a1f1f !important;
+    color: #ffb3b3 !important;
+}
+
+body.dark-mode .chat-info {
+    border: 1px solid #17a2b8 !important;
+    background-color: #1a3a3f !important;
+    color: #7dd3e0 !important;
+}
+
+body.dark-mode #chatContainer {
+    background-color: #252525;
+    border-color: #3a3a3a !important;
+}

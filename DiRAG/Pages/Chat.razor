@@ -89,7 +89,7 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         fontSize = DiRAG.Properties.Settings.Default.Chat_FontSize;
 
@@ -106,6 +106,12 @@
 
         // Get initial checked folders
         checkedFolders = MainForm.GetCheckedFolders();
+
+        // Subscribe to theme changes
+        MainForm.ThemeChanged += OnThemeChanged;
+
+        // Apply initial theme
+        await ApplyThemeAsync(MainForm.IsDarkTheme);
 
         // Display selected directories on startup
         if (checkedFolders.Count > 0)
@@ -267,6 +273,37 @@
         if (Localization != null)
         {
             Localization.CultureChanged -= OnCultureChanged;
+        }
+
+        // Unsubscribe from theme change events
+        if (MainForm != null)
+        {
+            MainForm.ThemeChanged -= OnThemeChanged;
+        }
+    }
+
+    private async void OnThemeChanged(object? sender, bool isDarkTheme)
+    {
+        await ApplyThemeAsync(isDarkTheme);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ApplyThemeAsync(bool isDarkTheme)
+    {
+        try
+        {
+            if (isDarkTheme)
+            {
+                await JSRuntime.InvokeVoidAsync("eval", "document.body.classList.add('dark-mode')");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("eval", "document.body.classList.remove('dark-mode')");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error applying theme: {ex.Message}");
         }
     }
 

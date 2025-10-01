@@ -14,6 +14,26 @@ namespace DiRAG.Forms
         private IMcpService? _mcpService;
         private McpServerCollection _mcpServerCollection = new();
 
+        // Event to notify Blazor about theme changes
+        public event EventHandler<bool>? ThemeChanged;
+
+        public bool IsDarkTheme
+        {
+            get
+            {
+                var themeIndex = Properties.Settings.Default.UI_Theme;
+                return IsDarkThemeByIndex(themeIndex);
+            }
+        }
+
+        private bool IsDarkThemeByIndex(int index)
+        {
+            // Krypton theme names containing "Black" or "Dark" are considered dark themes
+            // Based on KryptonThemeListBox standard themes
+            var darkThemeIndices = new[] { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23 }; // Black/Dark variants
+            return darkThemeIndices.Contains(index);
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -591,6 +611,9 @@ namespace DiRAG.Forms
         {
             Properties.Settings.Default.UI_Theme = kryptonThemeListBox1.SelectedIndex;
             Properties.Settings.Default.Save();
+
+            // Notify Blazor about theme change
+            ThemeChanged?.Invoke(this, IsDarkTheme);
         }
 
         private void LoadFolderTree()
