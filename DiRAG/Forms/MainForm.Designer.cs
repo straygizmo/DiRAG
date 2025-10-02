@@ -41,6 +41,7 @@
             tabPageSettings = new TabPage();
             tabSettings = new TabControl();
             tabPageChat = new TabPage();
+            kPanelGGUFProviderSettings = new Krypton.Toolkit.KryptonPanel();
             kPanelAPIProviderSettings = new Krypton.Toolkit.KryptonPanel();
             kPanelChatSettingTop = new Krypton.Toolkit.KryptonPanel();
             cmbAPIProvider = new Krypton.Toolkit.KryptonComboBox();
@@ -94,13 +95,13 @@
             kryptonStatusStrip1 = new Krypton.Toolkit.KryptonStatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             splitContainerMain = new SplitContainer();
-            kPanelGGUFProviderSettings = new Krypton.Toolkit.KryptonPanel();
             tabMain.SuspendLayout();
             tabPageDir.SuspendLayout();
             kToolStripDirTree.SuspendLayout();
             tabPageSettings.SuspendLayout();
             tabSettings.SuspendLayout();
             tabPageChat.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)kPanelGGUFProviderSettings).BeginInit();
             ((System.ComponentModel.ISupportInitialize)kPanelAPIProviderSettings).BeginInit();
             ((System.ComponentModel.ISupportInitialize)kPanelChatSettingTop).BeginInit();
             kPanelChatSettingTop.SuspendLayout();
@@ -123,7 +124,6 @@
             splitContainerMain.Panel1.SuspendLayout();
             splitContainerMain.Panel2.SuspendLayout();
             splitContainerMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)kPanelGGUFProviderSettings).BeginInit();
             SuspendLayout();
             // 
             // blazorWebView1
@@ -131,7 +131,7 @@
             blazorWebView1.Dock = DockStyle.Fill;
             blazorWebView1.Location = new Point(0, 0);
             blazorWebView1.Name = "blazorWebView1";
-            blazorWebView1.Size = new Size(905, 636);
+            blazorWebView1.Size = new Size(911, 612);
             blazorWebView1.TabIndex = 0;
             blazorWebView1.Text = "blazorWebView1";
             // 
@@ -144,7 +144,7 @@
             tabMain.Margin = new Padding(3, 2, 3, 2);
             tabMain.Name = "tabMain";
             tabMain.SelectedIndex = 0;
-            tabMain.Size = new Size(374, 636);
+            tabMain.Size = new Size(376, 612);
             tabMain.TabIndex = 2;
             // 
             // tabPageDir
@@ -156,7 +156,7 @@
             tabPageDir.Margin = new Padding(3, 2, 3, 2);
             tabPageDir.Name = "tabPageDir";
             tabPageDir.Padding = new Padding(3, 2, 3, 2);
-            tabPageDir.Size = new Size(366, 608);
+            tabPageDir.Size = new Size(368, 584);
             tabPageDir.TabIndex = 0;
             tabPageDir.Text = "📁Dir to RAG";
             tabPageDir.UseVisualStyleBackColor = true;
@@ -169,7 +169,7 @@
             ktvFolderTree.Margin = new Padding(3, 2, 3, 2);
             ktvFolderTree.MultiSelect = true;
             ktvFolderTree.Name = "ktvFolderTree";
-            ktvFolderTree.Size = new Size(360, 577);
+            ktvFolderTree.Size = new Size(362, 553);
             ktvFolderTree.TabIndex = 0;
             // 
             // kToolStripDirTree
@@ -178,7 +178,7 @@
             kToolStripDirTree.Items.AddRange(new ToolStripItem[] { tsbIndexing, tspRefresh });
             kToolStripDirTree.Location = new Point(3, 2);
             kToolStripDirTree.Name = "kToolStripDirTree";
-            kToolStripDirTree.Size = new Size(360, 25);
+            kToolStripDirTree.Size = new Size(362, 25);
             kToolStripDirTree.TabIndex = 3;
             kToolStripDirTree.Text = "Refresh the tree";
             // 
@@ -205,10 +205,10 @@
             // lblRagStatus
             // 
             lblRagStatus.Dock = DockStyle.Bottom;
-            lblRagStatus.Location = new Point(3, 604);
+            lblRagStatus.Location = new Point(3, 580);
             lblRagStatus.Margin = new Padding(3, 2, 3, 2);
             lblRagStatus.Name = "lblRagStatus";
-            lblRagStatus.Size = new Size(360, 2);
+            lblRagStatus.Size = new Size(362, 2);
             lblRagStatus.TabIndex = 2;
             lblRagStatus.Values.Text = "";
             // 
@@ -220,7 +220,7 @@
             tabPageSettings.Margin = new Padding(3, 2, 3, 2);
             tabPageSettings.Name = "tabPageSettings";
             tabPageSettings.Padding = new Padding(9, 8, 9, 8);
-            tabPageSettings.Size = new Size(366, 608);
+            tabPageSettings.Size = new Size(368, 584);
             tabPageSettings.TabIndex = 2;
             tabPageSettings.Text = "⚙️Settings";
             tabPageSettings.UseVisualStyleBackColor = true;
@@ -236,7 +236,7 @@
             tabSettings.Margin = new Padding(3, 2, 3, 2);
             tabSettings.Name = "tabSettings";
             tabSettings.SelectedIndex = 0;
-            tabSettings.Size = new Size(348, 592);
+            tabSettings.Size = new Size(350, 568);
             tabSettings.TabIndex = 15;
             // 
             // tabPageChat
@@ -249,10 +249,17 @@
             tabPageChat.Margin = new Padding(3, 2, 3, 2);
             tabPageChat.Name = "tabPageChat";
             tabPageChat.Padding = new Padding(3, 2, 3, 2);
-            tabPageChat.Size = new Size(340, 564);
+            tabPageChat.Size = new Size(342, 540);
             tabPageChat.TabIndex = 0;
             tabPageChat.Text = "Chat Settings";
             tabPageChat.UseVisualStyleBackColor = true;
+            // 
+            // kPanelGGUFProviderSettings
+            // 
+            kPanelGGUFProviderSettings.Location = new Point(61, 324);
+            kPanelGGUFProviderSettings.Name = "kPanelGGUFProviderSettings";
+            kPanelGGUFProviderSettings.Size = new Size(176, 138);
+            kPanelGGUFProviderSettings.TabIndex = 4;
             // 
             // kPanelAPIProviderSettings
             // 
@@ -273,7 +280,7 @@
             kPanelChatSettingTop.Location = new Point(3, 2);
             kPanelChatSettingTop.Margin = new Padding(3, 2, 3, 2);
             kPanelChatSettingTop.Name = "kPanelChatSettingTop";
-            kPanelChatSettingTop.Size = new Size(334, 84);
+            kPanelChatSettingTop.Size = new Size(336, 84);
             kPanelChatSettingTop.TabIndex = 0;
             // 
             // cmbAPIProvider
@@ -335,17 +342,17 @@
             cmbChatGGUFModel.Location = new Point(8, 53);
             cmbChatGGUFModel.Margin = new Padding(3, 2, 3, 2);
             cmbChatGGUFModel.Name = "cmbChatGGUFModel";
-            cmbChatGGUFModel.Size = new Size(312, 22);
+            cmbChatGGUFModel.Size = new Size(314, 22);
             cmbChatGGUFModel.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
             cmbChatGGUFModel.TabIndex = 18;
             // 
             // btnSaveChatSettings
             // 
             btnSaveChatSettings.Dock = DockStyle.Bottom;
-            btnSaveChatSettings.Location = new Point(3, 532);
+            btnSaveChatSettings.Location = new Point(3, 508);
             btnSaveChatSettings.Margin = new Padding(3, 2, 3, 2);
             btnSaveChatSettings.Name = "btnSaveChatSettings";
-            btnSaveChatSettings.Size = new Size(334, 30);
+            btnSaveChatSettings.Size = new Size(336, 30);
             btnSaveChatSettings.TabIndex = 1;
             btnSaveChatSettings.Values.DropDownArrowColor = Color.Empty;
             btnSaveChatSettings.Values.Text = "Save";
@@ -359,7 +366,7 @@
             tabPageRAG.Margin = new Padding(3, 2, 3, 2);
             tabPageRAG.Name = "tabPageRAG";
             tabPageRAG.Padding = new Padding(3, 2, 3, 2);
-            tabPageRAG.Size = new Size(339, 576);
+            tabPageRAG.Size = new Size(341, 552);
             tabPageRAG.TabIndex = 1;
             tabPageRAG.Text = "RAG Settings";
             tabPageRAG.UseVisualStyleBackColor = true;
@@ -389,7 +396,7 @@
             kPanelRAGTop.Location = new Point(3, 2);
             kPanelRAGTop.Margin = new Padding(3, 2, 3, 2);
             kPanelRAGTop.Name = "kPanelRAGTop";
-            kPanelRAGTop.Size = new Size(333, 542);
+            kPanelRAGTop.Size = new Size(335, 518);
             kPanelRAGTop.TabIndex = 0;
             // 
             // nudMaxContextLength
@@ -401,7 +408,7 @@
             nudMaxContextLength.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nudMaxContextLength.Minimum = new decimal(new int[] { 1000, 0, 0, 0 });
             nudMaxContextLength.Name = "nudMaxContextLength";
-            nudMaxContextLength.Size = new Size(113, 22);
+            nudMaxContextLength.Size = new Size(115, 22);
             nudMaxContextLength.TabIndex = 21;
             nudMaxContextLength.Value = new decimal(new int[] { 8000, 0, 0, 0 });
             // 
@@ -423,7 +430,7 @@
             nudTopKChunks.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             nudTopKChunks.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudTopKChunks.Name = "nudTopKChunks";
-            nudTopKChunks.Size = new Size(113, 22);
+            nudTopKChunks.Size = new Size(115, 22);
             nudTopKChunks.TabIndex = 19;
             nudTopKChunks.Value = new decimal(new int[] { 5, 0, 0, 0 });
             // 
@@ -445,7 +452,7 @@
             nudChunkOverlap.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             nudChunkOverlap.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
             nudChunkOverlap.Name = "nudChunkOverlap";
-            nudChunkOverlap.Size = new Size(113, 22);
+            nudChunkOverlap.Size = new Size(115, 22);
             nudChunkOverlap.TabIndex = 19;
             nudChunkOverlap.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
@@ -458,7 +465,7 @@
             nudChunkSize.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
             nudChunkSize.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             nudChunkSize.Name = "nudChunkSize";
-            nudChunkSize.Size = new Size(113, 22);
+            nudChunkSize.Size = new Size(115, 22);
             nudChunkSize.TabIndex = 17;
             nudChunkSize.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
@@ -471,7 +478,7 @@
             nudModelContextLength.Maximum = new decimal(new int[] { 32768, 0, 0, 0 });
             nudModelContextLength.Minimum = new decimal(new int[] { 512, 0, 0, 0 });
             nudModelContextLength.Name = "nudModelContextLength";
-            nudModelContextLength.Size = new Size(113, 22);
+            nudModelContextLength.Size = new Size(115, 22);
             nudModelContextLength.TabIndex = 15;
             nudModelContextLength.Value = new decimal(new int[] { 2048, 0, 0, 0 });
             // 
@@ -481,7 +488,7 @@
             txtEmbeddingModel.Location = new Point(6, 106);
             txtEmbeddingModel.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingModel.Name = "txtEmbeddingModel";
-            txtEmbeddingModel.Size = new Size(313, 23);
+            txtEmbeddingModel.Size = new Size(315, 23);
             txtEmbeddingModel.TabIndex = 13;
             txtEmbeddingModel.Text = "text-embedding-embeddinggemma-300m";
             // 
@@ -491,7 +498,7 @@
             txtEmbeddingUrl.Location = new Point(6, 55);
             txtEmbeddingUrl.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingUrl.Name = "txtEmbeddingUrl";
-            txtEmbeddingUrl.Size = new Size(313, 23);
+            txtEmbeddingUrl.Size = new Size(315, 23);
             txtEmbeddingUrl.TabIndex = 11;
             txtEmbeddingUrl.Text = "http://localhost:/1234";
             // 
@@ -568,7 +575,7 @@
             cmbGGUFModel.Location = new Point(6, 55);
             cmbGGUFModel.Margin = new Padding(3, 2, 3, 2);
             cmbGGUFModel.Name = "cmbGGUFModel";
-            cmbGGUFModel.Size = new Size(313, 22);
+            cmbGGUFModel.Size = new Size(315, 22);
             cmbGGUFModel.TabIndex = 9;
             cmbGGUFModel.Visible = false;
             // 
@@ -587,7 +594,7 @@
             btnTestEmbedding.Location = new Point(40, 328);
             btnTestEmbedding.Margin = new Padding(3, 2, 3, 2);
             btnTestEmbedding.Name = "btnTestEmbedding";
-            btnTestEmbedding.Size = new Size(236, 30);
+            btnTestEmbedding.Size = new Size(238, 30);
             btnTestEmbedding.TabIndex = 22;
             btnTestEmbedding.Values.DropDownArrowColor = Color.Empty;
             btnTestEmbedding.Values.Text = "Test Embedding";
@@ -596,10 +603,10 @@
             // btnSaveRAGSettings
             // 
             btnSaveRAGSettings.Dock = DockStyle.Bottom;
-            btnSaveRAGSettings.Location = new Point(3, 544);
+            btnSaveRAGSettings.Location = new Point(3, 520);
             btnSaveRAGSettings.Margin = new Padding(3, 2, 3, 2);
             btnSaveRAGSettings.Name = "btnSaveRAGSettings";
-            btnSaveRAGSettings.Size = new Size(333, 30);
+            btnSaveRAGSettings.Size = new Size(335, 30);
             btnSaveRAGSettings.TabIndex = 2;
             btnSaveRAGSettings.Values.DropDownArrowColor = Color.Empty;
             btnSaveRAGSettings.Values.Text = "Save";
@@ -611,7 +618,7 @@
             tabPageTheme.Controls.Add(kryptonPanel4);
             tabPageTheme.Location = new Point(4, 24);
             tabPageTheme.Name = "tabPageTheme";
-            tabPageTheme.Size = new Size(339, 576);
+            tabPageTheme.Size = new Size(341, 552);
             tabPageTheme.TabIndex = 2;
             tabPageTheme.Text = "UI";
             tabPageTheme.UseVisualStyleBackColor = true;
@@ -622,7 +629,7 @@
             kryptonThemeListBox1.Dock = DockStyle.Fill;
             kryptonThemeListBox1.Location = new Point(0, 75);
             kryptonThemeListBox1.Name = "kryptonThemeListBox1";
-            kryptonThemeListBox1.Size = new Size(339, 501);
+            kryptonThemeListBox1.Size = new Size(341, 477);
             kryptonThemeListBox1.TabIndex = 0;
             kryptonThemeListBox1.SelectedIndexChanged += KryptonThemeListBox1_SelectedIndexChanged;
             // 
@@ -634,7 +641,7 @@
             kryptonPanel4.Dock = DockStyle.Top;
             kryptonPanel4.Location = new Point(0, 0);
             kryptonPanel4.Name = "kryptonPanel4";
-            kryptonPanel4.Size = new Size(339, 75);
+            kryptonPanel4.Size = new Size(341, 75);
             kryptonPanel4.TabIndex = 1;
             // 
             // kryptonLabel1
@@ -663,7 +670,7 @@
             cmbLanguage.Location = new Point(4, 29);
             cmbLanguage.Margin = new Padding(3, 2, 3, 2);
             cmbLanguage.Name = "cmbLanguage";
-            cmbLanguage.Size = new Size(316, 22);
+            cmbLanguage.Size = new Size(318, 22);
             cmbLanguage.TabIndex = 16;
             cmbLanguage.SelectedIndexChanged += cmbLanguage_SelectedIndexChanged;
             // 
@@ -672,7 +679,7 @@
             tabPageMCP.Controls.Add(kryptonPanel1);
             tabPageMCP.Location = new Point(4, 24);
             tabPageMCP.Name = "tabPageMCP";
-            tabPageMCP.Size = new Size(339, 576);
+            tabPageMCP.Size = new Size(341, 552);
             tabPageMCP.TabIndex = 3;
             tabPageMCP.Text = "MCP";
             tabPageMCP.UseVisualStyleBackColor = true;
@@ -689,7 +696,7 @@
             kryptonPanel1.Dock = DockStyle.Fill;
             kryptonPanel1.Location = new Point(0, 0);
             kryptonPanel1.Name = "kryptonPanel1";
-            kryptonPanel1.Size = new Size(339, 576);
+            kryptonPanel1.Size = new Size(341, 552);
             kryptonPanel1.TabIndex = 0;
             kryptonPanel1.Visible = false;
             // 
@@ -776,11 +783,11 @@
             kryptonStatusStrip1.Font = new Font("Segoe UI", 9F);
             kryptonStatusStrip1.ImageScalingSize = new Size(20, 20);
             kryptonStatusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            kryptonStatusStrip1.Location = new Point(0, 636);
+            kryptonStatusStrip1.Location = new Point(0, 612);
             kryptonStatusStrip1.Name = "kryptonStatusStrip1";
             kryptonStatusStrip1.ProgressBars = null;
             kryptonStatusStrip1.RenderMode = ToolStripRenderMode.ManagerRenderMode;
-            kryptonStatusStrip1.Size = new Size(1283, 22);
+            kryptonStatusStrip1.Size = new Size(1291, 22);
             kryptonStatusStrip1.TabIndex = 4;
             kryptonStatusStrip1.Text = "kryptonStatusStrip1";
             // 
@@ -804,22 +811,15 @@
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(blazorWebView1);
-            splitContainerMain.Size = new Size(1283, 636);
-            splitContainerMain.SplitterDistance = 374;
+            splitContainerMain.Size = new Size(1291, 612);
+            splitContainerMain.SplitterDistance = 376;
             splitContainerMain.TabIndex = 5;
-            // 
-            // kPanelGGUFProviderSettings
-            // 
-            kPanelGGUFProviderSettings.Location = new Point(61, 324);
-            kPanelGGUFProviderSettings.Name = "kPanelGGUFProviderSettings";
-            kPanelGGUFProviderSettings.Size = new Size(176, 138);
-            kPanelGGUFProviderSettings.TabIndex = 4;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1283, 658);
+            ClientSize = new Size(1291, 634);
             Controls.Add(splitContainerMain);
             Controls.Add(kryptonStatusStrip1);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -836,6 +836,7 @@
             tabPageSettings.ResumeLayout(false);
             tabSettings.ResumeLayout(false);
             tabPageChat.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)kPanelGGUFProviderSettings).EndInit();
             ((System.ComponentModel.ISupportInitialize)kPanelAPIProviderSettings).EndInit();
             ((System.ComponentModel.ISupportInitialize)kPanelChatSettingTop).EndInit();
             kPanelChatSettingTop.ResumeLayout(false);
@@ -862,7 +863,6 @@
             splitContainerMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
             splitContainerMain.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)kPanelGGUFProviderSettings).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
