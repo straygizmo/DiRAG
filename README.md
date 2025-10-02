@@ -84,6 +84,19 @@ For RAG functionality, configure embedding settings:
 - **Embedding URL**: Endpoint for generating embeddings (e.g., `http://localhost:1234` for LM Studio)
 - **Embedding Model**: Model for embeddings (e.g., `text-embedding-embeddinggemma-300m`)
 
+#### GGUF Mode (Local Embedding)
+You can use local GGUF embedding models by placing them in the following directory structure:
+```
+python_tools/models/embedding/[provider_name]/[modelfile_name].gguf
+```
+
+For example:
+```
+python_tools/models/embedding/unsloth/embeddinggemma-300M-Q8_0.gguf
+```
+
+This allows you to run embeddings locally without requiring an external API service.
+
 ### RAG Settings
 - **Context Length**: Maximum context window size
 - **Chunk Size**: Size of document chunks for processing

@@ -559,11 +559,33 @@ namespace DiRAG.Forms
                     return;
                 }
 
-                // Enumerate all folders and .gguf files
+                // Check for embedding models in models/embedding/[provider_name]/[model].gguf
+                var embeddingPath = Path.Combine(modelsPath, "embedding");
+                if (Directory.Exists(embeddingPath))
+                {
+                    foreach (var providerDir in Directory.GetDirectories(embeddingPath))
+                    {
+                        var providerName = Path.GetFileName(providerDir);
+                        var ggufFiles = Directory.GetFiles(providerDir, "*.gguf");
+                        foreach (var ggufFile in ggufFiles)
+                        {
+                            var fileName = Path.GetFileName(ggufFile);
+                            var displayName = $"{providerName}/{fileName}";
+                            cmbGGUFModel.Items.Add(displayName);
+                        }
+                    }
+                }
+
+                // Legacy support: Check for .gguf files in models/[provider_name]/
                 foreach (var dir in Directory.GetDirectories(modelsPath))
                 {
                     var dirName = Path.GetFileName(dir);
-                    // Check if there are .gguf files in the folder
+                    // Skip the embedding folder (already processed above)
+                    if (dirName == "embedding" || dirName == "chat")
+                    {
+                        continue;
+                    }
+
                     var ggufFiles = Directory.GetFiles(dir, "*.gguf");
                     foreach (var ggufFile in ggufFiles)
                     {
@@ -573,7 +595,7 @@ namespace DiRAG.Forms
                     }
                 }
 
-                // Also check for .gguf files directly in models folder
+                // Legacy support: Check for .gguf files directly in models folder
                 foreach (var ggufFile in Directory.GetFiles(modelsPath, "*.gguf"))
                 {
                     var fileName = Path.GetFileName(ggufFile);

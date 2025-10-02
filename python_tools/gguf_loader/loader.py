@@ -72,7 +72,7 @@ def load_model(model_path: Optional[str] = None) -> GGUFEmbeddingModel:
     """
     if model_path is None:
         # Default path relative to project root
-        model_path = "models/unsloth/embeddinggemma-300M-Q8_0.gguf"
+        model_path = "models/embedding/unsloth/embeddinggemma-300M-Q8_0.gguf"
 
     path = Path(model_path)
     if not path.is_absolute():

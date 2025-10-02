@@ -348,9 +348,17 @@ namespace DiRAG.Services
 
             try
             {
+                // Build model path from _ggufModel (e.g., "unsloth/embeddinggemma-300M-Q8_0.gguf")
+                string? modelPath = null;
+                if (!string.IsNullOrEmpty(_ggufModel))
+                {
+                    modelPath = Path.Combine(PythonPathHelper.PythonToolsDirectory, "models", "embedding", _ggufModel);
+                }
+
                 var config = new
                 {
-                    texts = chunks.Select(c => c.ChunkText).ToList()
+                    texts = chunks.Select(c => c.ChunkText).ToList(),
+                    model_path = modelPath
                 };
 
                 var configJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
@@ -599,9 +607,17 @@ namespace DiRAG.Services
 
             try
             {
+                // Build model path from _ggufModel (e.g., "unsloth/embeddinggemma-300M-Q8_0.gguf")
+                string? modelPath = null;
+                if (!string.IsNullOrEmpty(_ggufModel))
+                {
+                    modelPath = Path.Combine(PythonPathHelper.PythonToolsDirectory, "models", "embedding", _ggufModel);
+                }
+
                 var config = new
                 {
-                    text = text
+                    text = text,
+                    model_path = modelPath
                 };
 
                 var configJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
