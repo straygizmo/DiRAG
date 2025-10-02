@@ -78,6 +78,19 @@ DiRAG supports multiple API providers:
 - **CLI Path**: Path to Claude Code executable
 - **Model**: Claude model identifier
 
+#### GGUF Models (Local Chat)
+You can use local GGUF chat models without an external API. Place your GGUF model files in:
+```
+python_tools/models/chat/[provider_name]/[modelfile_name].gguf
+```
+
+For example:
+```
+python_tools/models/chat/bartowski/gemma-2-2b-it-Q4_K_M.gguf
+```
+
+This allows you to run chat models entirely offline using LLamaSharp.
+
 ### Embedding Configuration
 
 For RAG functionality, configure embedding settings:
@@ -85,12 +98,12 @@ For RAG functionality, configure embedding settings:
 - **Embedding Model**: Model for embeddings (e.g., `text-embedding-embeddinggemma-300m`)
 
 #### GGUF Mode (Local Embedding)
-You can use local GGUF embedding models by placing them in the following directory structure:
+You can use local GGUF embedding models without an external API. Download GGUF embedding models from Hugging Face and place them in:
 ```
 python_tools/models/embedding/[provider_name]/[modelfile_name].gguf
 ```
 
-For example:
+For example, download a model from [unsloth/embeddinggemma-300m-GGUF](https://huggingface.co/unsloth/embeddinggemma-300m-GGUF/tree/main) and place it as:
 ```
 python_tools/models/embedding/unsloth/embeddinggemma-300M-Q8_0.gguf
 ```
@@ -192,25 +205,6 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 ## License
 
 MIT
-
-## Third-Party Model Licenses
-
-### Gemma Embedding Models
-
-If you choose to use Gemma embedding models (e.g., text-embedding-embeddinggemma-300m) with this application, please note:
-
-- Gemma models are provided by Google and are subject to their own [Terms of Use](https://ai.google.dev/gemma/terms)
-- When distributing this software with Gemma models included, you must:
-  - Provide notice to recipients that Gemma is subject to use restrictions
-  - Include a copy of or link to the Gemma Terms of Use
-  - Ensure compliance with the Prohibited Use Policy
-  - Include prominent notices if model files are modified
-- Commercial use is permitted but must comply with all terms and restrictions
-- Models are provided "AS IS" without warranty
-
-**Important**: Users are solely responsible for ensuring their use of Gemma models complies with Google's terms and applicable laws.
-
-For full details, see: https://ai.google.dev/gemma/terms
 
 ## Acknowledgments
 
