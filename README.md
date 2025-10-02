@@ -156,8 +156,11 @@ DiRAG/
 │   ├── retriever.py           # Document retrieval
 │   ├── gguf_loader/           # GGUF model loading utilities
 │   └── models/                # Local model storage
+│       ├── chat/              # Chat model directory
+│       │   └── [provider_name]/   # Provider-specific chat models
+│       │       └── [model_name].gguf
 │       └── embedding/         # Embedding model directory
-│           └── [provider_name]/   # Provider-specific models
+│           └── [provider_name]/   # Provider-specific embedding models
 │               └── [model_name].gguf
 └── DiRAG.sln                  # Visual Studio solution file
 ```
