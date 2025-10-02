@@ -583,21 +583,20 @@ namespace DiRAG.Forms
 
         private void UpdateProviderUI(string? provider)
         {
+            // Clear existing controls
+            kPanelAPIProviderSettings.Controls.Clear();
+
             if (provider == "Claude Code")
             {
-                // Show Claude Code settings panel
-                claudeCodeSettingsControl.Visible = true;
-
-                // Hide OpenAI settings panel
-                openAISettingsControl.Visible = false;
+                // Add Claude Code settings control
+                claudeCodeSettingsControl.Dock = DockStyle.Fill;
+                kPanelAPIProviderSettings.Controls.Add(claudeCodeSettingsControl);
             }
             else // OpenAI Compatible
             {
-                // Show OpenAI settings panel
-                openAISettingsControl.Visible = true;
-
-                // Hide Claude Code settings panel
-                claudeCodeSettingsControl.Visible = false;
+                // Add OpenAI settings control
+                openAISettingsControl.Dock = DockStyle.Fill;
+                kPanelAPIProviderSettings.Controls.Add(openAISettingsControl);
             }
         }
 
@@ -732,8 +731,9 @@ namespace DiRAG.Forms
                 // Show API provider controls
                 cmbAPIProvider.Visible = true;
                 lblAPIProvider.Text = "API Provider:";
-                openAISettingsControl.Visible = cmbAPIProvider.SelectedItem?.ToString() == "OpenAI Compatible";
-                claudeCodeSettingsControl.Visible = cmbAPIProvider.SelectedItem?.ToString() == "Claude Code";
+                kPanelAPIProviderSettings.Dock = DockStyle.Fill;
+                kPanelAPIProviderSettings.Visible = true;
+                kPanelGGUFProviderSettings.Visible = false;
 
                 // Hide GGUF controls
                 cmbChatGGUFModel.Visible = false;
@@ -743,8 +743,9 @@ namespace DiRAG.Forms
                 // Hide API provider controls
                 lblAPIProvider.Text = "Chat GGUF Model:";
                 cmbAPIProvider.Visible = false;
-                openAISettingsControl.Visible = false;
-                claudeCodeSettingsControl.Visible = false;
+                kPanelGGUFProviderSettings.Dock = DockStyle.Fill;
+                kPanelGGUFProviderSettings.Visible = true;
+                kPanelAPIProviderSettings.Visible = false;
 
                 // Show GGUF controls
                 cmbChatGGUFModel.Visible = true;

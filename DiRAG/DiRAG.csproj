@@ -17,8 +17,8 @@
     <PackageReference Include="Krypton.Navigator" Version="95.25.8.235" />
     <PackageReference Include="Krypton.Toolkit" Version="95.25.8.235" />
     <PackageReference Include="OpenAI" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="9.0.40" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="9.0.110" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
     <PackageReference Include="LLamaSharp" Version="0.25.0" />
     <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.25.0" />
   </ItemGroup>
