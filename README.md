@@ -101,6 +101,8 @@ This allows you to run embeddings locally without requiring an external API serv
 - **Context Length**: Maximum context window size
 - **Chunk Size**: Size of document chunks for processing
 - **Chunk Overlap**: Overlap between consecutive chunks
+- **Top K**: Number of most relevant document chunks to retrieve for context
+- **Total Max Context Length**: Maximum total length of all retrieved context chunks combined
 
 ## Usage
 
@@ -108,7 +110,10 @@ This allows you to run embeddings locally without requiring an external API serv
 
 2. **Select Folders**: Use the folder tree on the left to select directories containing documents you want to include in your knowledge base
 
-3. **Process Documents**: The application will automatically process and index documents from selected folders
+3. **Process Documents**:
+   - The application will automatically process and index documents from selected folders
+   - For Office/PDF documents (DOCX, XLSX, PPTX, PDF), MarkItDown converts them to markdown format, and the converted `.md` files are saved in the same directory as the source files
+   - After embedding, an `embeddings.jsonl` file is created in each checked folder containing the indexed document chunks
 
 4. **Start Chatting**: Type your questions in the chat interface. The AI will use both its training and the context from your documents to provide answers
 
@@ -130,7 +135,17 @@ DiRAG/
 │   ├── Models/                 # Data models
 │   └── wwwroot/               # Web assets for Blazor
 ├── python_tools/              # Python utilities
-│   └── convert_to_markdown.py # Document conversion tool
+│   ├── main.py                # Main entry point for Python tools
+│   ├── converter.py           # Document conversion (MarkItDown integration)
+│   ├── document_parser.py     # Document parsing utilities
+│   ├── embeddings.py          # Embedding generation
+│   ├── indexer.py             # Document indexing
+│   ├── retriever.py           # Document retrieval
+│   ├── gguf_loader/           # GGUF model loading utilities
+│   └── models/                # Local model storage
+│       └── embedding/         # Embedding model directory
+│           └── [provider_name]/   # Provider-specific models
+│               └── [model_name].gguf
 └── DiRAG.sln                  # Visual Studio solution file
 ```
 
