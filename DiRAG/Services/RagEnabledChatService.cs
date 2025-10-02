@@ -33,34 +33,43 @@ namespace DiRAG.Services
 
             // Get checked folders from MainForm
             var checkedFolders = _mainForm.GetCheckedFolders();
-            _lastCheckedFolders = new List<string>(checkedFolders);
 
             if (checkedFolders.Count == 0)
             {
                 // No folders selected for RAG, just pass through to inner service
+                _lastCheckedFolders = new List<string>();
                 return await _innerChatService.SendMessageAsync(userInput, systemMessage);
             }
 
-            // Check if embeddings exist for all checked folders
+            // Check if folder selection has changed
+            bool foldersChanged = !checkedFolders.SequenceEqual(_lastCheckedFolders);
+
+            // Only check for missing embeddings if folders have changed
             var foldersNeedingIndex = new List<string>();
-            foreach (var folder in checkedFolders)
+            if (foldersChanged)
             {
-                var embeddingsFile = Path.Combine(folder, "embeddings.jsonl");
-                if (!File.Exists(embeddingsFile))
+                foreach (var folder in checkedFolders)
                 {
-                    foldersNeedingIndex.Add(folder);
+                    var embeddingsFile = Path.Combine(folder, "embeddings.jsonl");
+                    if (!File.Exists(embeddingsFile))
+                    {
+                        foldersNeedingIndex.Add(folder);
+                    }
                 }
-            }
 
-            // Index folders if needed
-            if (foldersNeedingIndex.Count > 0)
-            {
-                var progress = new Progress<string>(status =>
+                // Index folders if needed
+                if (foldersNeedingIndex.Count > 0)
                 {
-                    Console.WriteLine($"Indexing: {status}");
-                });
+                    var progress = new Progress<string>(status =>
+                    {
+                        Console.WriteLine($"Indexing: {status}");
+                    });
 
-                await _mainForm.Indexing();
+                    await _mainForm.Indexing();
+                }
+
+                // Update last checked folders after indexing
+                _lastCheckedFolders = new List<string>(checkedFolders);
             }
 
             // Get RAG settings
