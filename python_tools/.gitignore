@@ -10,4 +10,5 @@ wheels/
 .venv
 uv.lock
 .claude
+models
 

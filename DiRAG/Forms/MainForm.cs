@@ -113,14 +113,41 @@ namespace DiRAG.Forms
                     contextLength, chunkSize, chunkOverlap, ggufModel);
             });
 
-            // Choose the chat service based on the selected API provider
+            // Choose the chat service based on the selected chat method
+            var chatMethod = Properties.Settings.Default.ChatMethod;
             var apiProvider = Properties.Settings.Default.API_Provider;
 
             services.AddScoped<IChatService>(serviceProvider =>
             {
                 IChatService innerService;
 
-                if (apiProvider == "Claude Code")
+                if (chatMethod == "GGUF")
+                {
+                    // Use GGUF local model
+                    var chatGGUFModel = Properties.Settings.Default.ChatGGUFModel;
+
+                    if (string.IsNullOrEmpty(chatGGUFModel))
+                    {
+                        throw new InvalidOperationException("Chat GGUF model is not configured. Please select a GGUF model in Settings.");
+                    }
+
+                    // Build full path to model file
+                    // chatGGUFModel is in format: "provider_name/model.gguf"
+                    var modelPath = Path.Combine(
+                        PythonPathHelper.PythonToolsDirectory,
+                        "models",
+                        "chat",
+                        chatGGUFModel.Replace("/", Path.DirectorySeparatorChar.ToString())
+                    );
+
+                    if (!File.Exists(modelPath))
+                    {
+                        throw new FileNotFoundException($"GGUF model file not found at: {modelPath}");
+                    }
+
+                    innerService = new GGUFChatService(modelPath);
+                }
+                else if (apiProvider == "Claude Code")
                 {
                     var cliPath = Properties.Settings.Default.ClaudeCode_CLIPath;
                     var model = Properties.Settings.Default.ClaudeCode_Model;
@@ -221,6 +248,30 @@ namespace DiRAG.Forms
             // Update UI visibility based on selected method
             UpdateEmbeddingMethodUI();
 
+            // Load chat method
+            var chatMethod = Properties.Settings.Default.ChatMethod;
+            if (chatMethod == "GGUF")
+            {
+                rbChatGGUF.Checked = true;
+            }
+            else
+            {
+                rbChatAPI.Checked = true;
+            }
+
+            // Load Chat GGUF models
+            LoadChatGGUFModels();
+
+            // Load selected Chat GGUF model
+            var chatGGUFModel = Properties.Settings.Default.ChatGGUFModel;
+            if (!string.IsNullOrEmpty(chatGGUFModel) && cmbChatGGUFModel.Items.Contains(chatGGUFModel))
+            {
+                cmbChatGGUFModel.SelectedItem = chatGGUFModel;
+            }
+
+            // Update chat method UI
+            UpdateChatMethodUI();
+
             var selectedIndex = Properties.Settings.Default.UI_Theme;
             if (selectedIndex >= 0)
             {
@@ -256,6 +307,10 @@ namespace DiRAG.Forms
 
             // For backward compatibility, set UseNativeEmbedding based on embedding method
             Properties.Settings.Default.UseNativeEmbedding = rbEmbeddingGGUF.Checked;
+
+            // Save chat method
+            Properties.Settings.Default.ChatMethod = rbChatGGUF.Checked ? "GGUF" : "API";
+            Properties.Settings.Default.ChatGGUFModel = cmbChatGGUFModel.SelectedItem?.ToString() ?? "";
 
             Properties.Settings.Default.Save();
 
@@ -566,7 +621,7 @@ namespace DiRAG.Forms
                     foreach (var providerDir in Directory.GetDirectories(embeddingPath))
                     {
                         var providerName = Path.GetFileName(providerDir);
-                        var ggufFiles = Directory.GetFiles(providerDir, "*.gguf");
+                        var ggufFiles = Directory.GetFiles(providerDir, "*.gguf", SearchOption.AllDirectories);
                         foreach (var ggufFile in ggufFiles)
                         {
                             var fileName = Path.GetFileName(ggufFile);
@@ -608,6 +663,42 @@ namespace DiRAG.Forms
             }
         }
 
+        private void LoadChatGGUFModels()
+        {
+            cmbChatGGUFModel.Items.Clear();
+
+            try
+            {
+                var modelsPath = Path.Combine(PythonPathHelper.PythonToolsDirectory, "models");
+
+                if (!Directory.Exists(modelsPath))
+                {
+                    return;
+                }
+
+                // Check for chat models in models/chat/[provider_name]/[model_name]/[model].gguf
+                var chatPath = Path.Combine(modelsPath, "chat");
+                if (Directory.Exists(chatPath))
+                {
+                    foreach (var providerDir in Directory.GetDirectories(chatPath))
+                    {
+                        var providerName = Path.GetFileName(providerDir);
+                        var ggufFiles = Directory.GetFiles(providerDir, "*.gguf", SearchOption.AllDirectories);
+                        foreach (var ggufFile in ggufFiles)
+                        {
+                            var fileName = Path.GetFileName(ggufFile);
+                            var displayName = $"{providerName}/{fileName}";
+                            cmbChatGGUFModel.Items.Add(displayName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading Chat GGUF models: {ex.Message}");
+            }
+        }
+
         private void UpdateEmbeddingMethodUI()
         {
             if (rbEmbeddingAPI.Checked)
@@ -634,6 +725,32 @@ namespace DiRAG.Forms
             }
         }
 
+        private void UpdateChatMethodUI()
+        {
+            if (rbChatAPI.Checked)
+            {
+                // Show API provider controls
+                cmbAPIProvider.Visible = true;
+                lblAPIProvider.Text = "API Provider:";
+                openAISettingsControl.Visible = cmbAPIProvider.SelectedItem?.ToString() == "OpenAI Compatible";
+                claudeCodeSettingsControl.Visible = cmbAPIProvider.SelectedItem?.ToString() == "Claude Code";
+
+                // Hide GGUF controls
+                cmbChatGGUFModel.Visible = false;
+            }
+            else if (rbChatGGUF.Checked)
+            {
+                // Hide API provider controls
+                lblAPIProvider.Text = "Chat GGUF Model:";
+                cmbAPIProvider.Visible = false;
+                openAISettingsControl.Visible = false;
+                claudeCodeSettingsControl.Visible = false;
+
+                // Show GGUF controls
+                cmbChatGGUFModel.Visible = true;
+            }
+        }
+
         private void rbEmbeddingAPI_CheckedChanged(object? sender, EventArgs e)
         {
             if (rbEmbeddingAPI.Checked)
@@ -647,6 +764,22 @@ namespace DiRAG.Forms
             if (rbEmbeddingGGUF.Checked)
             {
                 UpdateEmbeddingMethodUI();
+            }
+        }
+
+        private void rbChatAPI_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (rbChatAPI.Checked)
+            {
+                UpdateChatMethodUI();
+            }
+        }
+
+        private void rbChatGGUF_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (rbChatGGUF.Checked)
+            {
+                UpdateChatMethodUI();
             }
         }
 

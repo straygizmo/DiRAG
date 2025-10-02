@@ -291,5 +291,29 @@ namespace DiRAG.Properties {
                 this["EmbeddingGGUFModel"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("API")]
+        public string ChatMethod {
+            get {
+                return ((string)(this["ChatMethod"]));
+            }
+            set {
+                this["ChatMethod"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ChatGGUFModel {
+            get {
+                return ((string)(this["ChatGGUFModel"]));
+            }
+            set {
+                this["ChatGGUFModel"] = value;
+            }
+        }
     }
 }

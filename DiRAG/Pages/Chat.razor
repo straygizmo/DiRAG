@@ -94,14 +94,23 @@
         fontSize = DiRAG.Properties.Settings.Default.Chat_FontSize;
 
         // Load API Provider and Model information
-        apiProvider = DiRAG.Properties.Settings.Default.API_Provider;
-        if (apiProvider == "Claude Code")
+        var chatMethod = DiRAG.Properties.Settings.Default.ChatMethod;
+        if (chatMethod == "GGUF")
         {
-            modelName = DiRAG.Properties.Settings.Default.ClaudeCode_Model;
+            apiProvider = "Local GGUF";
+            modelName = DiRAG.Properties.Settings.Default.ChatGGUFModel;
         }
         else
         {
-            modelName = DiRAG.Properties.Settings.Default.OpenAI_Model;
+            apiProvider = DiRAG.Properties.Settings.Default.API_Provider;
+            if (apiProvider == "Claude Code")
+            {
+                modelName = DiRAG.Properties.Settings.Default.ClaudeCode_Model;
+            }
+            else
+            {
+                modelName = DiRAG.Properties.Settings.Default.OpenAI_Model;
+            }
         }
 
         // Get initial checked folders
@@ -153,10 +162,22 @@
             }
 
             // Update API Provider and Model if changed
-            var newApiProvider = DiRAG.Properties.Settings.Default.API_Provider;
-            var newModelName = newApiProvider == "Claude Code"
-                ? DiRAG.Properties.Settings.Default.ClaudeCode_Model
-                : DiRAG.Properties.Settings.Default.OpenAI_Model;
+            var chatMethod = DiRAG.Properties.Settings.Default.ChatMethod;
+            string newApiProvider;
+            string newModelName;
+
+            if (chatMethod == "GGUF")
+            {
+                newApiProvider = "Local GGUF";
+                newModelName = DiRAG.Properties.Settings.Default.ChatGGUFModel;
+            }
+            else
+            {
+                newApiProvider = DiRAG.Properties.Settings.Default.API_Provider;
+                newModelName = newApiProvider == "Claude Code"
+                    ? DiRAG.Properties.Settings.Default.ClaudeCode_Model
+                    : DiRAG.Properties.Settings.Default.OpenAI_Model;
+            }
 
             // Update checked folders
             var newCheckedFolders = MainForm.GetCheckedFolders();

@@ -47,6 +47,10 @@
             kPanelChatSettingTop = new Krypton.Toolkit.KryptonPanel();
             cmbAPIProvider = new Krypton.Toolkit.KryptonComboBox();
             lblAPIProvider = new Krypton.Toolkit.KryptonLabel();
+            rbChatAPI = new Krypton.Toolkit.KryptonRadioButton();
+            rbChatGGUF = new Krypton.Toolkit.KryptonRadioButton();
+            lblChatMethod = new Krypton.Toolkit.KryptonLabel();
+            cmbChatGGUFModel = new Krypton.Toolkit.KryptonComboBox();
             btnSaveChatSettings = new Krypton.Toolkit.KryptonButton();
             tabPageRAG = new TabPage();
             kPanelRAGTop = new Krypton.Toolkit.KryptonPanel();
@@ -101,6 +105,7 @@
             ((System.ComponentModel.ISupportInitialize)kPanelChatSettingTop).BeginInit();
             kPanelChatSettingTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)cmbAPIProvider).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)cmbChatGGUFModel).BeginInit();
             tabPageRAG.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)kPanelRAGTop).BeginInit();
             kPanelRAGTop.SuspendLayout();
@@ -125,7 +130,7 @@
             blazorWebView1.Dock = DockStyle.Fill;
             blazorWebView1.Location = new Point(0, 0);
             blazorWebView1.Name = "blazorWebView1";
-            blazorWebView1.Size = new Size(878, 536);
+            blazorWebView1.Size = new Size(890, 488);
             blazorWebView1.TabIndex = 0;
             blazorWebView1.Text = "blazorWebView1";
             // 
@@ -138,7 +143,7 @@
             tabMain.Margin = new Padding(3, 2, 3, 2);
             tabMain.Name = "tabMain";
             tabMain.SelectedIndex = 0;
-            tabMain.Size = new Size(365, 536);
+            tabMain.Size = new Size(369, 488);
             tabMain.TabIndex = 2;
             // 
             // tabPageDir
@@ -150,7 +155,7 @@
             tabPageDir.Margin = new Padding(3, 2, 3, 2);
             tabPageDir.Name = "tabPageDir";
             tabPageDir.Padding = new Padding(3, 2, 3, 2);
-            tabPageDir.Size = new Size(357, 508);
+            tabPageDir.Size = new Size(361, 460);
             tabPageDir.TabIndex = 0;
             tabPageDir.Text = "📁Dir to RAG";
             tabPageDir.UseVisualStyleBackColor = true;
@@ -163,7 +168,7 @@
             ktvFolderTree.Margin = new Padding(3, 2, 3, 2);
             ktvFolderTree.MultiSelect = true;
             ktvFolderTree.Name = "ktvFolderTree";
-            ktvFolderTree.Size = new Size(351, 477);
+            ktvFolderTree.Size = new Size(355, 429);
             ktvFolderTree.TabIndex = 0;
             // 
             // kToolStripDirTree
@@ -172,7 +177,7 @@
             kToolStripDirTree.Items.AddRange(new ToolStripItem[] { tsbIndexing, tspRefresh });
             kToolStripDirTree.Location = new Point(3, 2);
             kToolStripDirTree.Name = "kToolStripDirTree";
-            kToolStripDirTree.Size = new Size(351, 25);
+            kToolStripDirTree.Size = new Size(355, 25);
             kToolStripDirTree.TabIndex = 3;
             kToolStripDirTree.Text = "Refresh the tree";
             // 
@@ -199,10 +204,10 @@
             // lblRagStatus
             // 
             lblRagStatus.Dock = DockStyle.Bottom;
-            lblRagStatus.Location = new Point(3, 504);
+            lblRagStatus.Location = new Point(3, 456);
             lblRagStatus.Margin = new Padding(3, 2, 3, 2);
             lblRagStatus.Name = "lblRagStatus";
-            lblRagStatus.Size = new Size(351, 2);
+            lblRagStatus.Size = new Size(355, 2);
             lblRagStatus.TabIndex = 2;
             lblRagStatus.Values.Text = "";
             // 
@@ -214,7 +219,7 @@
             tabPageSettings.Margin = new Padding(3, 2, 3, 2);
             tabPageSettings.Name = "tabPageSettings";
             tabPageSettings.Padding = new Padding(9, 8, 9, 8);
-            tabPageSettings.Size = new Size(357, 508);
+            tabPageSettings.Size = new Size(361, 460);
             tabPageSettings.TabIndex = 2;
             tabPageSettings.Text = "⚙️Settings";
             tabPageSettings.UseVisualStyleBackColor = true;
@@ -230,7 +235,7 @@
             tabSettings.Margin = new Padding(3, 2, 3, 2);
             tabSettings.Name = "tabSettings";
             tabSettings.SelectedIndex = 0;
-            tabSettings.Size = new Size(339, 492);
+            tabSettings.Size = new Size(343, 444);
             tabSettings.TabIndex = 15;
             // 
             // tabPageChat
@@ -242,7 +247,7 @@
             tabPageChat.Margin = new Padding(3, 2, 3, 2);
             tabPageChat.Name = "tabPageChat";
             tabPageChat.Padding = new Padding(3, 2, 3, 2);
-            tabPageChat.Size = new Size(331, 464);
+            tabPageChat.Size = new Size(335, 416);
             tabPageChat.TabIndex = 0;
             tabPageChat.Text = "Chat Settings";
             tabPageChat.UseVisualStyleBackColor = true;
@@ -252,37 +257,41 @@
             kryptonPanel2.Controls.Add(claudeCodeSettingsControl);
             kryptonPanel2.Controls.Add(openAISettingsControl);
             kryptonPanel2.Dock = DockStyle.Fill;
-            kryptonPanel2.Location = new Point(3, 63);
+            kryptonPanel2.Location = new Point(3, 86);
             kryptonPanel2.Name = "kryptonPanel2";
-            kryptonPanel2.Size = new Size(325, 369);
+            kryptonPanel2.Size = new Size(329, 298);
             kryptonPanel2.TabIndex = 3;
             // 
             // claudeCodeSettingsControl
             // 
             claudeCodeSettingsControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            claudeCodeSettingsControl.Location = new Point(3, -7);
+            claudeCodeSettingsControl.Location = new Point(3, -4);
             claudeCodeSettingsControl.Name = "claudeCodeSettingsControl";
-            claudeCodeSettingsControl.Size = new Size(308, 120);
+            claudeCodeSettingsControl.Size = new Size(312, 120);
             claudeCodeSettingsControl.TabIndex = 2;
             claudeCodeSettingsControl.Visible = false;
             // 
             // openAISettingsControl
             // 
             openAISettingsControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            openAISettingsControl.Location = new Point(3, -7);
+            openAISettingsControl.Location = new Point(3, -4);
             openAISettingsControl.Name = "openAISettingsControl";
-            openAISettingsControl.Size = new Size(308, 243);
+            openAISettingsControl.Size = new Size(312, 243);
             openAISettingsControl.TabIndex = 2;
             // 
             // kPanelChatSettingTop
             // 
             kPanelChatSettingTop.Controls.Add(cmbAPIProvider);
             kPanelChatSettingTop.Controls.Add(lblAPIProvider);
+            kPanelChatSettingTop.Controls.Add(rbChatAPI);
+            kPanelChatSettingTop.Controls.Add(rbChatGGUF);
+            kPanelChatSettingTop.Controls.Add(lblChatMethod);
+            kPanelChatSettingTop.Controls.Add(cmbChatGGUFModel);
             kPanelChatSettingTop.Dock = DockStyle.Top;
             kPanelChatSettingTop.Location = new Point(3, 2);
             kPanelChatSettingTop.Margin = new Padding(3, 2, 3, 2);
             kPanelChatSettingTop.Name = "kPanelChatSettingTop";
-            kPanelChatSettingTop.Size = new Size(325, 61);
+            kPanelChatSettingTop.Size = new Size(329, 84);
             kPanelChatSettingTop.TabIndex = 0;
             // 
             // cmbAPIProvider
@@ -290,9 +299,9 @@
             cmbAPIProvider.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbAPIProvider.DropDownWidth = 250;
             cmbAPIProvider.Items.AddRange(new object[] { "OpenAI Compatible", "Claude Code" });
-            cmbAPIProvider.Location = new Point(3, 26);
+            cmbAPIProvider.Location = new Point(8, 53);
             cmbAPIProvider.Name = "cmbAPIProvider";
-            cmbAPIProvider.Size = new Size(282, 22);
+            cmbAPIProvider.Size = new Size(304, 22);
             cmbAPIProvider.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
             cmbAPIProvider.TabIndex = 1;
             toolTip1.SetToolTip(cmbAPIProvider, "Select an API provider");
@@ -300,20 +309,61 @@
             // 
             // lblAPIProvider
             // 
-            lblAPIProvider.Location = new Point(3, 7);
+            lblAPIProvider.Location = new Point(8, 34);
             lblAPIProvider.Margin = new Padding(3, 2, 3, 2);
             lblAPIProvider.Name = "lblAPIProvider";
             lblAPIProvider.Size = new Size(80, 20);
             lblAPIProvider.TabIndex = 14;
             lblAPIProvider.Values.Text = "API Provider:";
             // 
+            // rbChatAPI
+            // 
+            rbChatAPI.Location = new Point(144, 10);
+            rbChatAPI.Margin = new Padding(3, 2, 3, 2);
+            rbChatAPI.Name = "rbChatAPI";
+            rbChatAPI.Size = new Size(41, 20);
+            rbChatAPI.TabIndex = 15;
+            rbChatAPI.Values.Text = "API";
+            rbChatAPI.CheckedChanged += rbChatAPI_CheckedChanged;
+            // 
+            // rbChatGGUF
+            // 
+            rbChatGGUF.Location = new Point(203, 10);
+            rbChatGGUF.Margin = new Padding(3, 2, 3, 2);
+            rbChatGGUF.Name = "rbChatGGUF";
+            rbChatGGUF.Size = new Size(54, 20);
+            rbChatGGUF.TabIndex = 16;
+            rbChatGGUF.Values.Text = "GGUF";
+            rbChatGGUF.CheckedChanged += rbChatGGUF_CheckedChanged;
+            // 
+            // lblChatMethod
+            // 
+            lblChatMethod.Location = new Point(3, 10);
+            lblChatMethod.Margin = new Padding(3, 2, 3, 2);
+            lblChatMethod.Name = "lblChatMethod";
+            lblChatMethod.Size = new Size(85, 20);
+            lblChatMethod.TabIndex = 17;
+            lblChatMethod.Values.Text = "Chat Method:";
+            // 
+            // cmbChatGGUFModel
+            // 
+            cmbChatGGUFModel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbChatGGUFModel.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbChatGGUFModel.DropDownWidth = 304;
+            cmbChatGGUFModel.Location = new Point(8, 53);
+            cmbChatGGUFModel.Margin = new Padding(3, 2, 3, 2);
+            cmbChatGGUFModel.Name = "cmbChatGGUFModel";
+            cmbChatGGUFModel.Size = new Size(307, 22);
+            cmbChatGGUFModel.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
+            cmbChatGGUFModel.TabIndex = 18;
+            // 
             // btnSaveChatSettings
             // 
             btnSaveChatSettings.Dock = DockStyle.Bottom;
-            btnSaveChatSettings.Location = new Point(3, 432);
+            btnSaveChatSettings.Location = new Point(3, 384);
             btnSaveChatSettings.Margin = new Padding(3, 2, 3, 2);
             btnSaveChatSettings.Name = "btnSaveChatSettings";
-            btnSaveChatSettings.Size = new Size(325, 30);
+            btnSaveChatSettings.Size = new Size(329, 30);
             btnSaveChatSettings.TabIndex = 1;
             btnSaveChatSettings.Values.DropDownArrowColor = Color.Empty;
             btnSaveChatSettings.Values.Text = "Save";
@@ -327,7 +377,7 @@
             tabPageRAG.Margin = new Padding(3, 2, 3, 2);
             tabPageRAG.Name = "tabPageRAG";
             tabPageRAG.Padding = new Padding(3, 2, 3, 2);
-            tabPageRAG.Size = new Size(331, 464);
+            tabPageRAG.Size = new Size(334, 428);
             tabPageRAG.TabIndex = 1;
             tabPageRAG.Text = "RAG Settings";
             tabPageRAG.UseVisualStyleBackColor = true;
@@ -357,7 +407,7 @@
             kPanelRAGTop.Location = new Point(3, 2);
             kPanelRAGTop.Margin = new Padding(3, 2, 3, 2);
             kPanelRAGTop.Name = "kPanelRAGTop";
-            kPanelRAGTop.Size = new Size(325, 430);
+            kPanelRAGTop.Size = new Size(328, 394);
             kPanelRAGTop.TabIndex = 0;
             // 
             // nudMaxContextLength
@@ -369,7 +419,7 @@
             nudMaxContextLength.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nudMaxContextLength.Minimum = new decimal(new int[] { 1000, 0, 0, 0 });
             nudMaxContextLength.Name = "nudMaxContextLength";
-            nudMaxContextLength.Size = new Size(105, 22);
+            nudMaxContextLength.Size = new Size(108, 22);
             nudMaxContextLength.TabIndex = 21;
             nudMaxContextLength.Value = new decimal(new int[] { 8000, 0, 0, 0 });
             // 
@@ -391,7 +441,7 @@
             nudTopKChunks.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             nudTopKChunks.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudTopKChunks.Name = "nudTopKChunks";
-            nudTopKChunks.Size = new Size(105, 22);
+            nudTopKChunks.Size = new Size(108, 22);
             nudTopKChunks.TabIndex = 19;
             nudTopKChunks.Value = new decimal(new int[] { 5, 0, 0, 0 });
             // 
@@ -413,7 +463,7 @@
             nudChunkOverlap.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             nudChunkOverlap.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
             nudChunkOverlap.Name = "nudChunkOverlap";
-            nudChunkOverlap.Size = new Size(105, 22);
+            nudChunkOverlap.Size = new Size(108, 22);
             nudChunkOverlap.TabIndex = 19;
             nudChunkOverlap.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
@@ -426,7 +476,7 @@
             nudChunkSize.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
             nudChunkSize.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             nudChunkSize.Name = "nudChunkSize";
-            nudChunkSize.Size = new Size(105, 22);
+            nudChunkSize.Size = new Size(108, 22);
             nudChunkSize.TabIndex = 17;
             nudChunkSize.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
@@ -439,7 +489,7 @@
             nudModelContextLength.Maximum = new decimal(new int[] { 32768, 0, 0, 0 });
             nudModelContextLength.Minimum = new decimal(new int[] { 512, 0, 0, 0 });
             nudModelContextLength.Name = "nudModelContextLength";
-            nudModelContextLength.Size = new Size(105, 22);
+            nudModelContextLength.Size = new Size(108, 22);
             nudModelContextLength.TabIndex = 15;
             nudModelContextLength.Value = new decimal(new int[] { 2048, 0, 0, 0 });
             // 
@@ -449,7 +499,7 @@
             txtEmbeddingModel.Location = new Point(6, 106);
             txtEmbeddingModel.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingModel.Name = "txtEmbeddingModel";
-            txtEmbeddingModel.Size = new Size(305, 23);
+            txtEmbeddingModel.Size = new Size(308, 23);
             txtEmbeddingModel.TabIndex = 13;
             txtEmbeddingModel.Text = "text-embedding-embeddinggemma-300m";
             // 
@@ -459,7 +509,7 @@
             txtEmbeddingUrl.Location = new Point(6, 55);
             txtEmbeddingUrl.Margin = new Padding(3, 2, 3, 2);
             txtEmbeddingUrl.Name = "txtEmbeddingUrl";
-            txtEmbeddingUrl.Size = new Size(305, 23);
+            txtEmbeddingUrl.Size = new Size(308, 23);
             txtEmbeddingUrl.TabIndex = 11;
             txtEmbeddingUrl.Text = "http://localhost:/1234";
             // 
@@ -536,7 +586,7 @@
             cmbGGUFModel.Location = new Point(6, 55);
             cmbGGUFModel.Margin = new Padding(3, 2, 3, 2);
             cmbGGUFModel.Name = "cmbGGUFModel";
-            cmbGGUFModel.Size = new Size(305, 22);
+            cmbGGUFModel.Size = new Size(308, 22);
             cmbGGUFModel.TabIndex = 9;
             cmbGGUFModel.Visible = false;
             // 
@@ -555,7 +605,7 @@
             btnTestEmbedding.Location = new Point(40, 328);
             btnTestEmbedding.Margin = new Padding(3, 2, 3, 2);
             btnTestEmbedding.Name = "btnTestEmbedding";
-            btnTestEmbedding.Size = new Size(228, 30);
+            btnTestEmbedding.Size = new Size(231, 30);
             btnTestEmbedding.TabIndex = 22;
             btnTestEmbedding.Values.DropDownArrowColor = Color.Empty;
             btnTestEmbedding.Values.Text = "Test Embedding";
@@ -564,10 +614,10 @@
             // btnSaveRAGSettings
             // 
             btnSaveRAGSettings.Dock = DockStyle.Bottom;
-            btnSaveRAGSettings.Location = new Point(3, 432);
+            btnSaveRAGSettings.Location = new Point(3, 396);
             btnSaveRAGSettings.Margin = new Padding(3, 2, 3, 2);
             btnSaveRAGSettings.Name = "btnSaveRAGSettings";
-            btnSaveRAGSettings.Size = new Size(325, 30);
+            btnSaveRAGSettings.Size = new Size(328, 30);
             btnSaveRAGSettings.TabIndex = 2;
             btnSaveRAGSettings.Values.DropDownArrowColor = Color.Empty;
             btnSaveRAGSettings.Values.Text = "Save";
@@ -579,7 +629,7 @@
             tabPageTheme.Controls.Add(kryptonPanel4);
             tabPageTheme.Location = new Point(4, 24);
             tabPageTheme.Name = "tabPageTheme";
-            tabPageTheme.Size = new Size(331, 464);
+            tabPageTheme.Size = new Size(334, 428);
             tabPageTheme.TabIndex = 2;
             tabPageTheme.Text = "UI";
             tabPageTheme.UseVisualStyleBackColor = true;
@@ -590,7 +640,7 @@
             kryptonThemeListBox1.Dock = DockStyle.Fill;
             kryptonThemeListBox1.Location = new Point(0, 75);
             kryptonThemeListBox1.Name = "kryptonThemeListBox1";
-            kryptonThemeListBox1.Size = new Size(331, 389);
+            kryptonThemeListBox1.Size = new Size(334, 353);
             kryptonThemeListBox1.TabIndex = 0;
             kryptonThemeListBox1.SelectedIndexChanged += KryptonThemeListBox1_SelectedIndexChanged;
             // 
@@ -602,7 +652,7 @@
             kryptonPanel4.Dock = DockStyle.Top;
             kryptonPanel4.Location = new Point(0, 0);
             kryptonPanel4.Name = "kryptonPanel4";
-            kryptonPanel4.Size = new Size(331, 75);
+            kryptonPanel4.Size = new Size(334, 75);
             kryptonPanel4.TabIndex = 1;
             // 
             // kryptonLabel1
@@ -631,7 +681,7 @@
             cmbLanguage.Location = new Point(4, 29);
             cmbLanguage.Margin = new Padding(3, 2, 3, 2);
             cmbLanguage.Name = "cmbLanguage";
-            cmbLanguage.Size = new Size(308, 22);
+            cmbLanguage.Size = new Size(311, 22);
             cmbLanguage.TabIndex = 16;
             cmbLanguage.SelectedIndexChanged += cmbLanguage_SelectedIndexChanged;
             // 
@@ -640,7 +690,7 @@
             tabPageMCP.Controls.Add(kryptonPanel1);
             tabPageMCP.Location = new Point(4, 24);
             tabPageMCP.Name = "tabPageMCP";
-            tabPageMCP.Size = new Size(330, 476);
+            tabPageMCP.Size = new Size(334, 428);
             tabPageMCP.TabIndex = 3;
             tabPageMCP.Text = "MCP";
             tabPageMCP.UseVisualStyleBackColor = true;
@@ -657,7 +707,7 @@
             kryptonPanel1.Dock = DockStyle.Fill;
             kryptonPanel1.Location = new Point(0, 0);
             kryptonPanel1.Name = "kryptonPanel1";
-            kryptonPanel1.Size = new Size(330, 476);
+            kryptonPanel1.Size = new Size(334, 428);
             kryptonPanel1.TabIndex = 0;
             kryptonPanel1.Visible = false;
             // 
@@ -730,11 +780,11 @@
             kryptonStatusStrip1.Font = new Font("Segoe UI", 9F);
             kryptonStatusStrip1.ImageScalingSize = new Size(20, 20);
             kryptonStatusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            kryptonStatusStrip1.Location = new Point(0, 536);
+            kryptonStatusStrip1.Location = new Point(0, 488);
             kryptonStatusStrip1.Name = "kryptonStatusStrip1";
             kryptonStatusStrip1.ProgressBars = null;
             kryptonStatusStrip1.RenderMode = ToolStripRenderMode.ManagerRenderMode;
-            kryptonStatusStrip1.Size = new Size(1247, 22);
+            kryptonStatusStrip1.Size = new Size(1263, 22);
             kryptonStatusStrip1.TabIndex = 4;
             kryptonStatusStrip1.Text = "kryptonStatusStrip1";
             // 
@@ -758,15 +808,15 @@
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(blazorWebView1);
-            splitContainerMain.Size = new Size(1247, 536);
-            splitContainerMain.SplitterDistance = 365;
+            splitContainerMain.Size = new Size(1263, 488);
+            splitContainerMain.SplitterDistance = 369;
             splitContainerMain.TabIndex = 5;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1247, 558);
+            ClientSize = new Size(1263, 510);
             Controls.Add(splitContainerMain);
             Controls.Add(kryptonStatusStrip1);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -789,6 +839,7 @@
             kPanelChatSettingTop.ResumeLayout(false);
             kPanelChatSettingTop.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)cmbAPIProvider).EndInit();
+            ((System.ComponentModel.ISupportInitialize)cmbChatGGUFModel).EndInit();
             tabPageRAG.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)kPanelRAGTop).EndInit();
             kPanelRAGTop.ResumeLayout(false);
@@ -857,6 +908,10 @@
         private SplitContainer splitContainerMain;
         private Krypton.Toolkit.KryptonComboBox cmbAPIProvider;
         private Krypton.Toolkit.KryptonLabel lblAPIProvider;
+        private Krypton.Toolkit.KryptonRadioButton rbChatAPI;
+        private Krypton.Toolkit.KryptonRadioButton rbChatGGUF;
+        private Krypton.Toolkit.KryptonLabel lblChatMethod;
+        private Krypton.Toolkit.KryptonComboBox cmbChatGGUFModel;
         private Krypton.Toolkit.KryptonLabel lblTopKChunks;
         private Krypton.Toolkit.KryptonNumericUpDown nudTopKChunks;
         private Krypton.Toolkit.KryptonLabel lblTotalMaxContextLength;

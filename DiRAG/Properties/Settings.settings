@@ -74,5 +74,11 @@
     <Setting Name="EmbeddingGGUFModel" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ChatMethod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">API</Value>
+    </Setting>
+    <Setting Name="ChatGGUFModel" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
