@@ -284,6 +284,11 @@ namespace DiRAG.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            // Capture current chat settings before saving
+            var oldApiProvider = Properties.Settings.Default.API_Provider;
+            var oldChatMethod = Properties.Settings.Default.ChatMethod;
+            var oldChatGGUFModel = Properties.Settings.Default.ChatGGUFModel;
+
             // Save API Provider selection
             Properties.Settings.Default.API_Provider = cmbAPIProvider.SelectedItem?.ToString() ?? "OpenAI Compatible";
 
@@ -309,12 +314,44 @@ namespace DiRAG.Forms
             Properties.Settings.Default.UseNativeEmbedding = rbEmbeddingGGUF.Checked;
 
             // Save chat method
-            Properties.Settings.Default.ChatMethod = rbChatGGUF.Checked ? "GGUF" : "API";
-            Properties.Settings.Default.ChatGGUFModel = cmbChatGGUFModel.SelectedItem?.ToString() ?? "";
+            var newChatMethod = rbChatGGUF.Checked ? "GGUF" : "API";
+            var newChatGGUFModel = cmbChatGGUFModel.SelectedItem?.ToString() ?? "";
+            Properties.Settings.Default.ChatMethod = newChatMethod;
+            Properties.Settings.Default.ChatGGUFModel = newChatGGUFModel;
 
             Properties.Settings.Default.Save();
 
-            MessageBox.Show("Settings saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Check if chat settings changed
+            var newApiProvider = Properties.Settings.Default.API_Provider;
+            bool chatSettingsChanged = oldApiProvider != newApiProvider ||
+                                      oldChatMethod != newChatMethod ||
+                                      (newChatMethod == "GGUF" && oldChatGGUFModel != newChatGGUFModel);
+
+            // If chat settings changed, reinitialize Blazor WebView to load new model
+            if (chatSettingsChanged && blazorWebView1.Services != null)
+            {
+                try
+                {
+                    // Dispose existing Blazor WebView
+                    blazorWebView1.RootComponents.Clear();
+                    blazorWebView1.Services = null;
+
+                    // Reinitialize with new settings
+                    InitializeBlazorWebView();
+
+                    MessageBox.Show("Settings saved successfully! Chat service has been reloaded with the new configuration.",
+                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Settings saved, but failed to reload chat service: {ex.Message}\n\nPlease restart the application.",
+                        "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Settings saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private async void btnTestEmbedding_Click(object? sender, EventArgs e)

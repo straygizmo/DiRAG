@@ -38,8 +38,8 @@ namespace DiRAG.Services
                 // Inference parameters
                 _inferenceParams = new InferenceParams()
                 {
-                    MaxTokens = 512,
-                    AntiPrompts = new List<string> { "User:", "\n\n" }
+                    MaxTokens = 2048,
+                    AntiPrompts = new List<string> { "User:" }
                 };
             }
             catch (Exception ex)
